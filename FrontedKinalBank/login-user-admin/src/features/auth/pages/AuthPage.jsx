@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ForgotPasswordForm } from "../components/ForgotPasswordForm"
+import { ForgotPasswordForm } from "../components/ForgotPassword"
 import { LoginForm } from "../components/LoginForm"
 import { RegisterForm } from "../components/RegisterForm"
 
@@ -8,49 +8,48 @@ export const AuthPage = () => {
     const [isRegister, setIsRegister] = useState(false)
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-xl bg-white rounded-xl shadow-lg border border-gray-200 p-6 md:p-10">
+        <div style={{
+            width: "100%",
+            padding: "2.5rem 1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+        }}>
+            <div className="auth-card fade-in" style={{
+                width: "100%",
+                maxWidth: "420px",
+                padding: "2.5rem 2rem",
+            }}>
 
-                <div className="flex justify-center mb-6">
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
                     <img
                         src="/src/assets/img/KinalBank.png"
                         alt="KinalBank"
-                        className="h-20 w-auto"
+                        style={{ height: "72px", objectFit: "contain" }}
                     />
                 </div>
 
-                <div className="text-center mb-6">
-                    <h1 className="text-2xl lf:text-3xl font-bold text-gray-900 mb-2">
+                <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
+                    <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#111827" }}>
                         {isForgot
-                            ? "Recuperar Contraseña"
+                            ? "Recuperar contraseña"
                             : isRegister
-                                ? "Crear Cuenta"
-                                : "Bienvenido de Nuevo"
-                        }
+                                ? "Crear cuenta"
+                                : "Bienvenido"}
                     </h1>
-
-                    <p className="text-gray-600 text-base max-w-md mx-auto">
+                    <p style={{ fontSize: "13px", color: "#6b7280", marginTop: "4px" }}>
                         {isForgot
-                            ? "Ingresa tus datos para recuperar tu contraseña"
+                            ? "Ingresa tus datos para continuar"
                             : isRegister
                                 ? "Completa los datos para registrarte"
-                                : "Ingresa a tu cuenta de administrador Kinal Bank"
-                        }
+                                : "Ingresa a tu cuenta"}
                     </p>
                 </div>
 
                 {isForgot ? (
-                    <ForgotPasswordForm
-                        onSwitch={() => {
-                            setIsForgot(false)
-                        }}
-                    />
+                    <ForgotPasswordForm onSwitch={() => setIsForgot(false)} />
                 ) : isRegister ? (
-                    <RegisterForm
-                        onSwitch={() => {
-                            setIsRegister(false)
-                        }}
-                    />
+                    <RegisterForm onSwitch={() => setIsRegister(false)} />
                 ) : (
                     <LoginForm
                         onForgot={() => setIsForgot(true)}

@@ -1,4 +1,4 @@
-import { DashboardContainer } from "../../shared/components/layout/DashboardContainer";
+import { DashboardContainer } from "../../shared/components/layouts/DashboardContainer";
 import { Outlet } from "react-router-dom";
 
 export const DashboardPage = () => {

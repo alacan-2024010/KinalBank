@@ -1,103 +1,87 @@
-import { useForm } from "react-hook-form";
-import { useAuthStore } from "../store/authStore";
-import toast from "react-hot-toast";
+import { useForm } from "react-hook-form"
+import { useAuthStore } from "../store/authStore"
+import toast from "react-hot-toast"
 
 export const RegisterForm = ({ onSwitch }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const registerUser = useAuthStore(state => state.register);
-    const loading = useAuthStore(state => state.loading);
+    const { register, handleSubmit, formState: { errors } } = useForm()
+    const registerUser = useAuthStore(state => state.register)
+    const loading = useAuthStore(state => state.loading)
 
     const onSubmit = async (data) => {
-        const res = await registerUser(data);
-
+        const res = await registerUser(data)
         if (res.success) {
-            toast.success("Registro exitoso, espera aprobación del administrador");
-            onSwitch();
+            toast.success("Registro exitoso")
+            onSwitch()
         }
-    };
+    }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 
-            <input
-                placeholder="Nombre completo"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("name", { required: "Nombre requerido" })}
-            />
-            {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+            <div className="scroll-fields">
 
-            <input
-                placeholder="Username"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("username", { required: "Username requerido" })}
-            />
+                <div className="two-col">
+                    <div>
+                        <label className="field-label">Nombre completo</label>
+                        <input placeholder="Ana García" {...register("name", { required: true })} />
+                    </div>
+                    <div>
+                        <label className="field-label">Username</label>
+                        <input placeholder="anagarcia" {...register("username", { required: true })} />
+                    </div>
+                </div>
 
-            <input
-                type="email"
-                placeholder="Correo"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("email", { required: "Correo requerido" })}
-            />
+                <div>
+                    <label className="field-label">Correo electrónico</label>
+                    <input type="email" placeholder="correo@ejemplo.com" {...register("email", { required: true })} />
+                </div>
 
-            <input
-                type="password"
-                placeholder="Contraseña"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("password", { required: "Contraseña requerida" })}
-            />
+                <div>
+                    <label className="field-label">Contraseña</label>
+                    <input type="password" placeholder="••••••••" {...register("password", { required: true })} />
+                </div>
 
-            <input
-                placeholder="DPI"
-                maxLength={13}
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("dpi", { required: "DPI requerido" })}
-            />
+                <div className="two-col">
+                    <div>
+                        <label className="field-label">DPI</label>
+                        <input placeholder="1234567890101" {...register("dpi", { required: true })} />
+                    </div>
+                    <div>
+                        <label className="field-label">Teléfono</label>
+                        <input placeholder="+502 0000-0000" {...register("phone", { required: true })} />
+                    </div>
+                </div>
 
-            <input
-                placeholder="Dirección"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("address", { required: "Dirección requerida" })}
-            />
+                <div>
+                    <label className="field-label">Dirección</label>
+                    <input placeholder="Ciudad de Guatemala, Zona 10" {...register("address", { required: true })} />
+                </div>
 
-            <input
-                placeholder="Teléfono"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("phone", { required: "Teléfono requerido" })}
-            />
+                <div className="two-col">
+                    <div>
+                        <label className="field-label">Ocupación</label>
+                        <input placeholder="Desarrollador" {...register("job", { required: true })} />
+                    </div>
+                    <div>
+                        <label className="field-label">Ingresos mensuales</label>
+                        <input type="number" placeholder="Q 5,000" {...register("monthlyIncome", { required: true })} />
+                    </div>
+                </div>
 
-            <input
-                placeholder="Trabajo"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("job", { required: "Trabajo requerido" })}
-            />
+            </div>
 
-            <input
-                type="number"
-                placeholder="Ingresos mensuales"
-                className="w-full px-3 py-2 border rounded-lg"
-                {...register("monthlyIncome", { required: "Ingresos requeridos" })}
-            />
-
-            <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#2B3F6C] hover:bg-[#24345a] text-white py-2 rounded-lg"
-            >
-                {loading ? "Registrando..." : "Registrarse"}
+            <button type="submit" className="btn-primary" disabled={loading}>
+                {loading ? "Registrando..." : "Crear cuenta"}
             </button>
 
-            <p className="text-center text-sm">
+            <p style={{ textAlign: "center", fontSize: "13px", color: "#6b7280" }}>
                 ¿Ya tienes cuenta?{" "}
-                <button
-                    type="button"
-                    onClick={onSwitch}
-                    className="text-[#2B3F6C] font-medium"
-                >
+                <button type="button" onClick={onSwitch} className="auth-link">
                     Iniciar sesión
                 </button>
             </p>
 
         </form>
-    );
-};
+    )
+}
