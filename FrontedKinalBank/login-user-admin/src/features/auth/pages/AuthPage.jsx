@@ -10,34 +10,35 @@ export const AuthPage = () => {
     return (
         <div style={{
             width: "100%",
-            padding: "2.5rem 1rem",
+            minHeight: "100vh",
+            padding: "2rem 1rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
         }}>
             <div className="auth-card fade-in" style={{
                 width: "100%",
-                maxWidth: "420px",
-                padding: "2.5rem 2rem",
+                maxWidth: "680px",
+                padding: "2.5rem 4rem",
             }}>
 
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.75rem" }}>
                     <img
                         src="/src/assets/img/KinalBank.png"
                         alt="KinalBank"
-                        style={{ height: "72px", objectFit: "contain" }}
+                        style={{ height: "80px", objectFit: "contain" }}
                     />
                 </div>
 
-                <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
-                    <h1 style={{ fontSize: "22px", fontWeight: 700, color: "#111827" }}>
+                <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+                    <h1 style={{ fontSize: "26px", fontWeight: 700, color: "#111827" }}>
                         {isForgot
                             ? "Recuperar contraseña"
                             : isRegister
                                 ? "Crear cuenta"
                                 : "Bienvenido"}
                     </h1>
-                    <p style={{ fontSize: "13px", color: "#6b7280", marginTop: "4px" }}>
+                    <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "6px" }}>
                         {isForgot
                             ? "Ingresa tus datos para continuar"
                             : isRegister

@@ -35,8 +35,8 @@ input {
   border-radius: 10px;
   background: white;
   width: 100%;
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 13px 16px;
+  font-size: 15px;
   color: #111827;
 }
 
@@ -66,10 +66,10 @@ button:active {
   background: linear-gradient(135deg, #2B3F6C, #1f2e52);
   color: white;
   width: 100%;
-  padding: 11px;
+  padding: 14px;
   border: none;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.2px;
@@ -119,10 +119,10 @@ button:active {
 
 .field-label {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: #374151;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .error-msg {
@@ -166,4 +166,27 @@ button:active {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 2rem 1.5rem !important;
+    max-width: 100% !important;
+  }
+
+  .two-col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.5rem 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  body {
+    align-items: flex-start;
+    padding-top: 1rem;
+  }
 }
