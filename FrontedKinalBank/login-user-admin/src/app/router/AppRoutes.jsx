@@ -1,14 +1,13 @@
-import { Routes, Route } from 'react-router-dom'
-import { AuthPage } from '../../features/auth/pages/AuthPage'
-import { Toaster } from "react-hot-toast"
+import { Routes, Route } from "react-router-dom";
+import { AuthPage } from "../../features/auth/pages/AuthPage.jsx";
+import { DashboardPage } from "../layouts/DashboardPage.jsx";
 
 export const AppRoutes = () => {
     return (
-        <>
-            <Toaster />
-            <Routes>
-                <Route path="/" element={<AuthPage />} />
-            </Routes>
-        </>
+        <Routes>
+            <Route path="/" element={<AuthPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} >
+            </Route>
+        </Routes>
     )
 }
