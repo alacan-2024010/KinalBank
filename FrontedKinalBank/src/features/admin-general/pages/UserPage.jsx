@@ -1,74 +1,7 @@
-// front/src/features/admin-general/pages/UsersPage.jsx
 import { useEffect, useState } from "react";
 import { useUsersStore } from "../store/UserStore";
+import { ApproveModal } from "../components/ApproveModal";
 
-/* ─── Modal Aprobar Usuario ───────────────────────────── */
-const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
-  const [role, setRole] = useState("CLIENT");
-
-  return (
-    <div style={overlay}>
-      <div style={card}>
-        {/* Header */}
-        <div style={cardHeader}>
-          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", color: "#94a3b8", textTransform: "uppercase" }}>
-            Aprobar solicitud
-          </span>
-          <button onClick={onClose} style={closeBtn}>×</button>
-        </div>
-
-        {/* Body */}
-        <div style={{ padding: "24px 28px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
-            <div style={avatar}>{user.Name?.charAt(0).toUpperCase()}</div>
-            <div>
-              <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 16 }}>{user.Name}</div>
-              <div style={{ color: "#64748b", fontSize: 13 }}>{user.Email}</div>
-            </div>
-          </div>
-
-          <div style={infoGrid}>
-            {[
-              ["Usuario", user.Username],
-              ["DPI", user.DPI],
-              ["Teléfono", user.Phone],
-              ["Trabajo", user.Job],
-              ["Ingreso mensual", `Q ${Number(user.MonthlyIncome || 0).toLocaleString("es-GT", { minimumFractionDigits: 2 })}`],
-              ["Dirección", user.Address],
-            ].map(([label, val]) => (
-              <div key={label} style={infoCell}>
-                <span style={infoLabel}>{label}</span>
-                <span style={infoVal}>{val}</span>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop: 20 }}>
-            <label style={fieldLabel}>Asignar rol</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)} style={selectStyle}>
-              <option value="CLIENT">CLIENT</option>
-              <option value="ADMIN">ADMIN</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div style={cardFooter}>
-          <button onClick={onClose} style={btnSecondary}>Cancelar</button>
-          <button
-            onClick={() => onConfirm(user.Id, role)}
-            disabled={loading}
-            style={btnApprove}
-          >
-            {loading ? "Aprobando…" : "✓ Aprobar usuario"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ─── Página de Usuarios ──────────────────────────────── */
 export const UsersPage = () => {
   const { pendingUsers = [], loading, error, getPendingUsers, approveUser, clearError } = useUsersStore();
   const [selected, setSelected] = useState(null);
@@ -85,7 +18,6 @@ export const UsersPage = () => {
   return (
     <>
       <div style={pageWrap}>
-        {/* Header */}
         <div style={pageHeader}>
           <div>
             <h1 style={pageTitle}>Solicitudes pendientes</h1>
@@ -95,7 +27,6 @@ export const UsersPage = () => {
           </div>
         </div>
 
-        {/* Error */}
         {error && (
           <div style={errorBanner}>
             <span>{error}</span>
@@ -103,7 +34,6 @@ export const UsersPage = () => {
           </div>
         )}
 
-        {/* Tabla de usuarios */}
         <div style={tableWrap}>
           {loading && pendingUsers.length === 0 ? (
             <div style={emptyState}>Cargando solicitudes…</div>
@@ -127,13 +57,13 @@ export const UsersPage = () => {
                   {pendingUsers.map((user, i) => (
                     <tr
                       key={user.Id}
-                      style={{ ...tr, background: i % 2 === 0 ? "#fff" : "#f8fafc" }}
+                      style={{ ...trStyle, background: i % 2 === 0 ? "#fff" : "#f8fafc" }}
                       onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"}
                       onMouseLeave={(e) => e.currentTarget.style.background = i % 2 === 0 ? "#fff" : "#f8fafc"}
                     >
                       <td style={td}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <div style={{ ...avatar, width: 30, height: 30, fontSize: 12 }}>{user.Name?.charAt(0).toUpperCase()}</div>
+                          <div style={tdAvatar}>{user.Name?.charAt(0).toUpperCase()}</div>
                           <span style={{ fontWeight: 600, color: "#0f172a" }}>{user.Name}</span>
                         </div>
                       </td>
@@ -159,7 +89,6 @@ export const UsersPage = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {selected && (
         <ApproveModal
           user={selected}
@@ -172,9 +101,40 @@ export const UsersPage = () => {
   );
 };
 
-/* ─── Estilos (copiar tal cual de tu código original) ───────────────────────── */
-// pageWrap, pageHeader, pageTitle, pageSubtitle, errorBanner, tableWrap, emptyState
-// table, th, tr, td, monoChip, btnReview
-// overlay, card, cardHeader, closeBtn, avatar, infoGrid, infoCell, infoLabel, infoVal
-// fieldLabel, selectStyle, cardFooter, btnSecondary, btnApprove
-// (estos ya los tienes en tu UsersPage original, solo cópialos tal cual)
+// ── Estilos ──────────────────────────────────────────────
+const pageWrap = { padding: "32px 36px", maxWidth: 1100, margin: "0 auto" };
+const pageHeader = { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 };
+const pageTitle = { fontSize: 22, fontWeight: 700, color: "#0f172a", margin: 0 };
+const pageSubtitle = { fontSize: 13, color: "#94a3b8", margin: "4px 0 0" };
+const errorBanner = {
+  display: "flex", alignItems: "center", justifyContent: "space-between",
+  background: "#fef2f2", border: "1px solid #fca5a5", color: "#dc2626",
+  borderRadius: 8, padding: "12px 16px", marginBottom: 16, fontSize: 13,
+};
+const tableWrap = {
+  background: "#fff", borderRadius: 12,
+  boxShadow: "0 1px 4px rgba(0,0,0,0.07)", border: "1px solid #f1f5f9", overflow: "hidden",
+};
+const emptyState = { padding: "60px 20px", textAlign: "center", color: "#94a3b8", fontSize: 14 };
+const table = { width: "100%", borderCollapse: "collapse", fontSize: 13 };
+const th = {
+  padding: "12px 16px", textAlign: "left", fontSize: 10, fontWeight: 700,
+  letterSpacing: "0.1em", textTransform: "uppercase", color: "#94a3b8",
+  background: "#f8fafc", borderBottom: "1px solid #f1f5f9",
+};
+const trStyle = { borderBottom: "1px solid #f8fafc", transition: "background 150ms" };
+const td = { padding: "12px 16px", verticalAlign: "middle" };
+const tdAvatar = {
+  width: 30, height: 30, borderRadius: "50%", background: "#e0e7ff",
+  color: "#4f46e5", fontWeight: 700, fontSize: 12,
+  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+};
+const monoChip = {
+  fontFamily: "monospace", fontSize: 12, background: "#f1f5f9",
+  color: "#475569", padding: "2px 8px", borderRadius: 4,
+};
+const btnReview = {
+  padding: "6px 14px", borderRadius: 6, border: "1px solid #e2e8f0",
+  background: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer",
+  color: "#4f46e5", transition: "background 150ms",
+};

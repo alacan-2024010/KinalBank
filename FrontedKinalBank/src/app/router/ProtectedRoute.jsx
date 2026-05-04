@@ -1,4 +1,3 @@
-// front/src/app/router/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
 
 /**
@@ -11,23 +10,24 @@ import { Navigate } from "react-router-dom";
 export const ProtectedRoute = ({ children, allowedRoles = [], redirectTo = "/" }) => {
   const token = localStorage.getItem("token");
 
+  console.log("TOKEN:", token ? "existe" : "no existe")  // 👈
+
   if (!token) return <Navigate to={redirectTo} replace />;
 
   try {
-    // Decodifica el payload (no verifica firma — eso lo hace el backend)
     const payload = JSON.parse(atob(token.split(".")[1]));
     const role = payload?.role;
 
+    console.log("PAYLOAD ROLE:", role, "ALLOWED:", allowedRoles)  // 👈
+
     if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
-      // Redirige al dashboard correcto según su rol real
-      if (role === "ADMIN") return <Navigate to="/dashboard/accounts" replace />;
-      if (role === "CLIENT") return <Navigate to="/dashboard/client" replace />;
+      if (role === "ADMIN_ROLE") return <Navigate to="/dashboard/users" replace />;
+      if (role === "CLIENT_ROLE") return <Navigate to="/dashboard/client" replace />;
       return <Navigate to={redirectTo} replace />;
     }
 
     return children;
   } catch {
-    // Token malformado
     localStorage.removeItem("token");
     return <Navigate to={redirectTo} replace />;
   }

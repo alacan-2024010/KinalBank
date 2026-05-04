@@ -15,7 +15,7 @@ export const RoleRedirect = () => {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const role = payload?.role;
 
-    if (role === "ADMIN") return <Navigate to="/dashboard/accounts" replace />;
+    if (role === "ADMIN") return <Navigate to="/dashboard/users" replace />;
     if (role === "CLIENT") return <Navigate to="/dashboard/client" replace />;
 
     return <Navigate to="/" replace />;

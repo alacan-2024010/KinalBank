@@ -1,13 +1,13 @@
-import { axiosAuth } from "./api";
+import { axiosAuth } from "./api"
 
-export const login = async (data) => {
-  return await axiosAuth.post("/auth/login", data);
-};
+export const loginRequest = (data) =>
+  axiosAuth.post('/auth/login', data)
 
-export const register = async (data) => {
-  return await axiosAuth.post("/auth/register", data);
-};
+export const registerRequest = (data) =>
+  axiosAuth.post('/auth/register', data)
 
-export const forgotPassword = async (data) => {
-  return await axiosAuth.put("/auth/forgot-password", data);
-};
+export const forgotPasswordRequest = (data) =>
+  axiosAuth.put('/auth/forgot-password', data)
+
+export const profileRequest = () =>
+  axiosAuth.get('/auth/profile')

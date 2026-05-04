@@ -191,13 +191,21 @@ export const LoginForm = ({ onForgot, onRegister }) => {
   const [hoverBtn, setHoverBtn] = useState(false)
 
   const onSubmit = async (data) => {
-    setLoginError(null)
-    const res = await login(data)
-    if (res.success) {
-      navigate("/dashboard")
-    } else {
-      setLoginError(res.error)
-    }
+      setLoginError(null)
+      const res = await login(data)
+
+      if (res?.success) {
+          const role = res.user?.role
+
+
+          if (role === "ADMIN") {
+              navigate("/dashboard")
+          } else {
+              navigate("/dashboard/client")
+          }
+      } else {
+          setLoginError(res.error)
+      }
   }
 
   const isPending = loginError?.toLowerCase().includes("pendiente")

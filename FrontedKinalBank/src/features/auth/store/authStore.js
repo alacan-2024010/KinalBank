@@ -1,102 +1,87 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { login as loginRequest, register, forgotPassword } from "../../../shared/api";
+import { create } from 'zustand'
+import { loginRequest, registerRequest, forgotPasswordRequest, profileRequest } from '../../../shared/api'
 
-export const useAuthStore = create(
-  persist(
-    (set, get) => ({
-      user: null,
-      token: null,
-      loading: false,
-      error: null,
-      isAuthenticated: false,
+export const useAuthStore = create((set) => ({
+    user: null,
+    token: localStorage.getItem('token') || null,
+    loading: false,
+    error: null,
 
-      login: async ({ email, password }) => {
+    login: async (data) => {
         try {
-          set({ loading: true, error: null });
+            set({ loading: true, error: null })
 
-          const { data } = await loginRequest({ email, password });
+            const res = await loginRequest(data)
 
-          set({
-            user: data.user,
-            token: data.token,
-            isAuthenticated: true,
-            loading: false,
-          });
+            localStorage.setItem('token', res.data.token)
 
-          localStorage.setItem("token", data.token);
+            set({
+                user: res.data.user,
+                token: res.data.token,
+                loading: false
+            })
 
-          return { success: true };
+            return { success: true, user: res.data.user }
 
         } catch (err) {
-          console.error("Login error:", err);
-
-          const message =
-            err.response?.data?.message || "Error de autenticación";
-
-          set({ error: message, loading: false });
-
-          return { success: false, error: message };
+            set({
+                error: err.response?.data?.message || 'Error de autenticación',
+                loading: false
+            })
+            return { success: false }
         }
-      },
+    },
 
-      register: async (formData) => {
+    register: async (data) => {
         try {
-          set({ loading: true, error: null });
+            set({ loading: true, error: null })
 
-          await register(formData);
+            const res = await registerRequest(data)
 
-          set({ loading: false });
+            set({ loading: false })
 
-          return { success: true };
+            return { success: true, data: res.data }
 
         } catch (err) {
-          const message =
-            err.response?.data?.message || "Error en registro";
-
-          set({ error: message, loading: false });
-
-          return { success: false, error: message };
+            set({
+                error: err.response?.data?.message || 'Error en registro',
+                loading: false
+            })
+            return { success: false }
         }
-      },
+    },
 
-      forgotPassword: async ({ username, dpi, newPassword }) => {
+    forgotPassword: async (data) => {
         try {
-          set({ loading: true, error: null });
+            set({ loading: true, error: null })
 
-          await forgotPassword({
-            username,
-            dpi,
-            newPassword
-          });
+            await forgotPasswordRequest(data)
 
-          set({ loading: false });
+            set({ loading: false })
 
-          return { success: true };
+            return { success: true }
 
         } catch (err) {
-          const message =
-            err.response?.data?.message || "Error al recuperar contraseña";
-
-          set({ error: message, loading: false });
-
-          return { success: false, error: message };
+            set({
+                error: err.response?.data?.message || 'Error al recuperar contraseña',
+                loading: false
+            })
+            return { success: false }
         }
-      },
+    },
 
-      logout: () => {
-        localStorage.removeItem("token");
+    getProfile: async () => {
+        try {
+            const res = await profileRequest()
+            set({ user: res.data.user })
+        } catch {
+            localStorage.removeItem('token')
+            set({ user: null, token: null })
+        }
+    },
 
-        set({
-          user: null,
-          token: null,
-          isAuthenticated: false,
-        });
-      },
-
-    }),
-    {
-      name: "auth-storage"
+    logout: () => {
+        localStorage.removeItem('token')
+        set({ user: null, token: null })
     }
-  )
-);
+}))

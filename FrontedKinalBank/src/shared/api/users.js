@@ -1,4 +1,4 @@
-// front/src/shared/api/users.js
+
 import { axiosAuth } from "./api";
 
 export const getPendingUsers = () =>

@@ -1,4 +1,3 @@
-// front/src/features/admin-general/store/usersStore.js
 import { create } from "zustand";
 import { getPendingUsers, approveUser } from "../../../shared/api/users.js";
 
@@ -23,7 +22,6 @@ export const useUsersStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       await approveUser(userId, role);
-      // Quitar al usuario aprobado de la lista local
       set((state) => ({
         pendingUsers: state.pendingUsers.filter((u) => u.Id !== userId),
       }));
