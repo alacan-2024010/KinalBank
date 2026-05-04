@@ -62,7 +62,7 @@ export const AccountsPage = () => {
                     <button
                         onClick={() => setModal({ type: "create" })}
                         disabled={loading}
-                        className="px-5 py-2.5 md:px-6 md:py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60"
+                        className="px-5 py-2.5 md:px-6 md:py-3 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60"
                     >
                         + Nueva cuenta
                     </button>
@@ -88,7 +88,7 @@ export const AccountsPage = () => {
                                     <tr>
                                         <td colSpan={7} className="px-4 py-16 text-center">
                                             <div className="flex flex-col items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full border-[3px] border-gray-100 border-t-orange-500 animate-spin" />
+                                                <div className="w-8 h-8 rounded-full border-[3px] border-gray-100 border-t-indigo-500 animate-spin" />
                                                 <p className="text-sm text-gray-400">Cargando cuentas…</p>
                                             </div>
                                         </td>
@@ -100,7 +100,7 @@ export const AccountsPage = () => {
                                         </td>
                                     </tr>
                                 ) : accounts.map((acc) => (
-                                    <tr key={acc._id} className="border-b border-gray-50 hover:bg-orange-50/40 transition-colors">
+                                    <tr key={acc._id} className="border-b border-gray-50 hover:bg-slate-50 transition-colors">
 
                                         <td className="px-4 py-3 font-mono text-xs text-gray-500">
                                             {acc.accountNumber}
@@ -130,7 +130,7 @@ export const AccountsPage = () => {
                                             <div className="flex gap-3">
                                                 <button
                                                     onClick={() => setModal({ type: "edit", account: acc })}
-                                                    className="text-xs font-semibold text-orange-500 hover:text-orange-600"
+                                                    className="text-xs font-semibold text-indigo-500 hover:text-indigo-700"
                                                 >
                                                     Editar
                                                 </button>
