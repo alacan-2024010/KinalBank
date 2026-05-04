@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-export const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
-    const [role, setRole] = useState("CLIENT");
+export const ApproveModal = ({ user, onClose, onConfirm, onDeny, loading }) => {
+    const [role, setRole]         = useState("CLIENT");
+    const [confirming, setConfirming] = useState(false); // paso de confirmación para denegar
 
     const fields = [
         ["Usuario",         user.Username],
@@ -23,7 +24,7 @@ export const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
             >
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900">Aprobar solicitud</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Revisar solicitud</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-600 text-xl leading-none p-1 transition-colors"
@@ -55,38 +56,76 @@ export const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
                         ))}
                     </div>
 
-                    {/* Select de rol */}
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                            Asignar rol
-                        </label>
-                        <select
-                            value={role}
-                            onChange={(e) => setRole(e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-orange-500 text-sm outline-none transition-colors bg-white"
-                        >
-                            <option value="CLIENT">CLIENT</option>
-                            <option value="ADMIN">ADMIN</option>
-                        </select>
-                    </div>
+                    {/* Confirmación de denegación */}
+                    {confirming ? (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center space-y-3">
+                            <p className="text-sm font-semibold text-red-700">¿Seguro que deseas denegar esta solicitud?</p>
+                            <p className="text-xs text-red-500">
+                                El usuario <span className="font-semibold">{user.Name}</span> será eliminado permanentemente.
+                            </p>
+                            <div className="flex justify-center gap-3 pt-1">
+                                <button
+                                    onClick={() => setConfirming(false)}
+                                    className="px-4 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 hover:bg-gray-50 transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={() => onDeny(user.Id)}
+                                    disabled={loading}
+                                    className="px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold disabled:opacity-60 transition-colors"
+                                >
+                                    {loading ? "Denegando…" : "Sí, denegar"}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        /* Select de rol — solo visible cuando no estamos confirmando */
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                                Asignar rol
+                            </label>
+                            <select
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-orange-500 text-sm outline-none transition-colors bg-white"
+                            >
+                                <option value="CLIENT">CLIENT</option>
+                                <option value="ADMIN">ADMIN</option>
+                            </select>
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-end gap-3 px-6 pb-6 pt-2 border-t border-gray-100">
-                    <button
-                        onClick={onClose}
-                        className="px-5 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={() => onConfirm(user.Id, role)}
-                        disabled={loading}
-                        className="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold disabled:opacity-60 transition-colors"
-                    >
-                        {loading ? "Aprobando…" : "✓ Aprobar"}
-                    </button>
-                </div>
+                {!confirming && (
+                    <div className="flex justify-between gap-3 px-6 pb-6 pt-2 border-t border-gray-100">
+                        {/* Denegar — izquierda */}
+                        <button
+                            onClick={() => setConfirming(true)}
+                            disabled={loading}
+                            className="px-5 py-2 rounded-lg border border-red-200 bg-red-50 text-sm font-semibold text-red-600 hover:bg-red-100 hover:border-red-300 disabled:opacity-60 transition-colors"
+                        >
+                            ✕ Denegar
+                        </button>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={onClose}
+                                className="px-5 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={() => onConfirm(user.Id, role)}
+                                disabled={loading}
+                                className="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold disabled:opacity-60 transition-colors"
+                            >
+                                {loading ? "Aprobando…" : "✓ Aprobar"}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

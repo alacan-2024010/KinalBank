@@ -1,39 +1,61 @@
 import { create } from "zustand";
-import { getPendingUsers, approveUser } from "../../../shared/api/users.js";
+import {
+  getPendingUsers as apiGetPending,
+  approveUser    as apiApprove,
+  denyUser       as apiDeny,
+} from "../../../shared/api/users.js";
 
 export const useUsersStore = create((set) => ({
   pendingUsers: [],
   loading: false,
   error: null,
 
+  clearError: () => set({ error: null }),
+
   getPendingUsers: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await getPendingUsers();
-      set({ pendingUsers: data.users });
+      const res = await apiGetPending();
+      set({ pendingUsers: res.data.users ?? [] });
     } catch (err) {
-      set({ error: err.response?.data?.message ?? "Error al cargar usuarios" });
+      set({ error: err.response?.data?.message ?? "Error al cargar solicitudes" });
     } finally {
       set({ loading: false });
     }
   },
 
-  approveUser: async (userId, role = "CLIENT") => {
+  approveUser: async (userId, role) => {
     set({ loading: true, error: null });
     try {
-      await approveUser(userId, role);
-      set((state) => ({
-        pendingUsers: state.pendingUsers.filter((u) => u.Id !== userId),
+      await apiApprove(userId, role);
+      set((s) => ({
+        pendingUsers: s.pendingUsers.filter((u) => u.Id !== userId),
       }));
       return { success: true };
     } catch (err) {
-      const msg = err.response?.data?.message ?? "Error al aprobar usuario";
-      set({ error: msg });
-      return { success: false, message: msg };
+      const message = err.response?.data?.message ?? "Error al aprobar usuario";
+      set({ error: message });
+      return { success: false, message };
     } finally {
       set({ loading: false });
     }
   },
 
-  clearError: () => set({ error: null }),
+  denyUser: async (userId) => {
+    set({ loading: true, error: null });
+    try {
+      await apiDeny(userId);
+      // Quitar al usuario denegado de la lista local
+      set((s) => ({
+        pendingUsers: s.pendingUsers.filter((u) => u.Id !== userId),
+      }));
+      return { success: true };
+    } catch (err) {
+      const message = err.response?.data?.message ?? "Error al denegar usuario";
+      set({ error: message });
+      return { success: false, message };
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));

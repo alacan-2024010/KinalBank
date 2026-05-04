@@ -1,19 +1,70 @@
-import { useState } from "react";
-import { Badge } from "./Badge";
+import { useState, useEffect, useRef } from "react";
+import { getApprovedUsers } from "../../../shared/api/users";
 
 export const AccountModal = ({ initial, onClose, onSave, loading }) => {
     const isEdit = Boolean(initial?._id);
+
     const [form, setForm] = useState(
         isEdit
             ? { accountType: initial.accountType, currency: initial.currency, status: initial.status }
             : { accountType: "AHORRO", currency: "GTQ", balance: 0, ownerId: "" }
     );
+
+    // Estado del buscador de usuario (solo en modo crear)
+    const [search, setSearch]           = useState("");
+    const [results, setResults]         = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [searching, setSearching]     = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const debounceRef = useRef(null);
+
     const [err, setErr] = useState("");
 
     const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
+    // Buscar usuarios con debounce de 350ms
+    useEffect(() => {
+        if (isEdit) return;
+
+        if (!search.trim()) {
+            setResults([]);
+            setShowDropdown(false);
+            return;
+        }
+
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(async () => {
+            setSearching(true);
+            try {
+                const res = await getApprovedUsers(search);
+                setResults(res.data.users ?? []);
+                setShowDropdown(true);
+            } catch {
+                setResults([]);
+            } finally {
+                setSearching(false);
+            }
+        }, 350);
+
+        return () => clearTimeout(debounceRef.current);
+    }, [search]);
+
+    const selectUser = (user) => {
+        setSelectedUser(user);
+        set("ownerId", user.Id);
+        setSearch(`${user.Name} — ${user.DPI}`);
+        setShowDropdown(false);
+        setResults([]);
+    };
+
+    const clearUser = () => {
+        setSelectedUser(null);
+        set("ownerId", "");
+        setSearch("");
+    };
+
     const handleSubmit = async () => {
-        if (!isEdit && !form.ownerId.trim()) return setErr("El ID del propietario es obligatorio.");
+        if (!isEdit && !form.ownerId) return setErr("Debes seleccionar un propietario.");
         if (!isEdit && form.balance === undefined) return setErr("El saldo es obligatorio.");
         setErr("");
         const result = await onSave(form);
@@ -44,14 +95,73 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
 
                 {/* Body */}
                 <div className="px-6 py-5 space-y-4">
+
+                    {/* Buscador de propietario (solo crear) */}
                     {!isEdit && (
-                        <Field label="ID del propietario">
-                            <input
-                                className={inputClass()}
-                                value={form.ownerId}
-                                onChange={(e) => set("ownerId", e.target.value)}
-                                placeholder="Mongo ObjectId del usuario"
-                            />
+                        <Field label="Propietario">
+                            <div className="relative">
+                                <div className="relative flex items-center">
+                                    <input
+                                        className={inputClass()}
+                                        value={search}
+                                        onChange={(e) => {
+                                            setSearch(e.target.value);
+                                            if (selectedUser) clearUser();
+                                        }}
+                                        placeholder="Buscar por nombre o DPI…"
+                                        autoComplete="off"
+                                    />
+
+                                    {/* Indicador de búsqueda o usuario seleccionado */}
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                        {searching && (
+                                            <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-200 border-t-orange-400 animate-spin" />
+                                        )}
+                                        {selectedUser && !searching && (
+                                            <button
+                                                onClick={clearUser}
+                                                className="text-gray-300 hover:text-gray-500 text-sm leading-none"
+                                                title="Limpiar selección"
+                                            >
+                                                ✕
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Dropdown de resultados */}
+                                {showDropdown && (
+                                    <ul className="absolute z-10 left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-48 overflow-y-auto">
+                                        {results.length === 0 ? (
+                                            <li className="px-4 py-3 text-xs text-gray-400 text-center">
+                                                Sin resultados
+                                            </li>
+                                        ) : results.map((u) => (
+                                            <li
+                                                key={u.Id}
+                                                onClick={() => selectUser(u)}
+                                                className="px-4 py-2.5 cursor-pointer hover:bg-orange-50 transition-colors flex items-center gap-3"
+                                            >
+                                                <div className="w-7 h-7 rounded-full bg-orange-100 text-orange-600 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                                                    {u.Name?.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-semibold text-gray-800">{u.Name}</p>
+                                                    <p className="text-[10px] text-gray-400 font-mono">{u.DPI}</p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+
+                            {/* Chip de usuario seleccionado */}
+                            {selectedUser && (
+                                <div className="flex items-center gap-2 mt-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-lg">
+                                    <span className="text-xs text-orange-700 font-semibold">{selectedUser.Name}</span>
+                                    <span className="text-[10px] text-orange-400 font-mono">— {selectedUser.DPI}</span>
+                                </div>
+                            )}
                         </Field>
                     )}
 

@@ -5,7 +5,7 @@ import { ApproveModal } from "../components/ApproveModal";
 export const UsersPage = () => {
     const {
         pendingUsers = [], loading, error,
-        getPendingUsers, approveUser, clearError,
+        getPendingUsers, approveUser, denyUser, clearError,
     } = useUsersStore();
 
     const [selected, setSelected] = useState(null);
@@ -14,6 +14,11 @@ export const UsersPage = () => {
 
     const handleApprove = async (userId, role) => {
         const result = await approveUser(userId, role);
+        if (result?.success) setSelected(null);
+    };
+
+    const handleDeny = async (userId) => {
+        const result = await denyUser(userId);
         if (result?.success) setSelected(null);
     };
 
@@ -58,7 +63,6 @@ export const UsersPage = () => {
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm border-collapse">
-
                                 <thead>
                                     <tr className="bg-gray-50 border-b border-gray-100">
                                         {["Nombre", "Usuario", "Correo", "DPI", "Teléfono", "Trabajo", "Ingreso", "Acciones"].map((h) => (
@@ -78,9 +82,7 @@ export const UsersPage = () => {
                                                     <div className="w-9 h-9 rounded-full bg-orange-100 text-orange-600 font-bold text-sm flex items-center justify-center">
                                                         {user.Name?.charAt(0).toUpperCase()}
                                                     </div>
-                                                    <span className="font-semibold text-gray-900">
-                                                        {user.Name}
-                                                    </span>
+                                                    <span className="font-semibold text-gray-900">{user.Name}</span>
                                                 </div>
                                             </td>
 
@@ -90,9 +92,7 @@ export const UsersPage = () => {
                                                 </span>
                                             </td>
 
-                                            <td className="px-4 py-3 text-gray-500">
-                                                {user.Email}
-                                            </td>
+                                            <td className="px-4 py-3 text-gray-500">{user.Email}</td>
 
                                             <td className="px-4 py-3">
                                                 <span className="font-mono text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
@@ -100,13 +100,8 @@ export const UsersPage = () => {
                                                 </span>
                                             </td>
 
-                                            <td className="px-4 py-3 text-gray-500">
-                                                {user.Phone}
-                                            </td>
-
-                                            <td className="px-4 py-3 text-gray-500">
-                                                {user.Job}
-                                            </td>
+                                            <td className="px-4 py-3 text-gray-500">{user.Phone}</td>
+                                            <td className="px-4 py-3 text-gray-500">{user.Job}</td>
 
                                             <td className="px-4 py-3 font-semibold text-gray-900">
                                                 Q {Number(user.MonthlyIncome || 0).toLocaleString("es-GT", { minimumFractionDigits: 2 })}
@@ -124,7 +119,6 @@ export const UsersPage = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-
                             </table>
                         </div>
                     )}
@@ -137,6 +131,7 @@ export const UsersPage = () => {
                     user={selected}
                     onClose={() => setSelected(null)}
                     onConfirm={handleApprove}
+                    onDeny={handleDeny}
                     loading={loading}
                 />
             )}
