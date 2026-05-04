@@ -7,7 +7,7 @@ export const useUsersStore = create((set) => ({
   loading: false,
   error: null,
 
-  fetchPendingUsers: async () => {
+  getPendingUsers: async () => {
     set({ loading: true, error: null });
     try {
       const { data } = await getPendingUsers();

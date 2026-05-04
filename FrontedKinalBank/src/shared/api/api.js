@@ -8,6 +8,14 @@ const axiosAuth = axios.create({
   }
 });
 
+const axiosAccount = axios.create({
+  baseURL: import.meta.env.VITE_ACCOUNT_URL,
+  timeout: 8000,
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+
 axiosAuth.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
 
@@ -18,4 +26,14 @@ axiosAuth.interceptors.request.use((config) => {
     return config;
 });
 
-export { axiosAuth };
+axiosAccount.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
+export { axiosAuth , axiosAccount};

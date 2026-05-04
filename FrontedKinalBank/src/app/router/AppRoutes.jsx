@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthPage } from "../../features/auth/pages/AuthPage.jsx";
 import { DashboardPage } from "../layouts/DashboardPage.jsx";
 import { AccountsPage } from "../../features/admin-general/pages/AccountsPage.jsx";
+import { UsersPage } from "../../features/admin-general/pages/UserPage.jsx";
 import { ClientDashboardPage } from "../../features/client/pages/ClientDashboardPage.jsx";
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { RoleRedirect } from "./RoleRedirect.jsx";
@@ -15,7 +16,6 @@ export const AppRoutes = () => {
 
       {/* Dashboard compartido con layout */}
       <Route path="/dashboard" element={<DashboardPage />}>
-
         {/* Redirige /dashboard → al dashboard correcto según rol */}
         <Route index element={<RoleRedirect />} />
 
@@ -25,6 +25,14 @@ export const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AccountsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="users"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <UsersPage /> {/* Asegúrate de que esta ruta esté correctamente definida */}
             </ProtectedRoute>
           }
         />
