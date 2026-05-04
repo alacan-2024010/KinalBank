@@ -1,133 +1,137 @@
-import { useEffect, useState } from "react"
-import { useUsersStore } from "../store/UserStore"
-import { ApproveModal } from "../components/ApproveModal"
+import { useEffect, useState } from "react";
+import { useUsersStore } from "../store/UserStore";
+import { ApproveModal } from "../components/ApproveModal";
 
 export const UsersPage = () => {
-    const { pendingUsers = [], loading, error, getPendingUsers, approveUser, clearError } = useUsersStore()
-    const [selected, setSelected] = useState(null)
+    const {
+        pendingUsers = [], loading, error,
+        getPendingUsers, approveUser, clearError,
+    } = useUsersStore();
 
-    useEffect(() => { getPendingUsers() }, [])
+    const [selected, setSelected] = useState(null);
+
+    useEffect(() => { getPendingUsers(); }, []);
 
     const handleApprove = async (userId, role) => {
-        const result = await approveUser(userId, role)
-        if (result?.success) setSelected(null)
-    }
+        const result = await approveUser(userId, role);
+        if (result?.success) setSelected(null);
+    };
 
     return (
         <>
-            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-
-                {/* Header */}
-                <div style={{ marginBottom: 24 }}>
-                    <h1 style={{ fontSize: 20, fontWeight: 700, color: "#0f172a", margin: 0 }}>
-                        Solicitudes pendientes
-                    </h1>
-                    <p style={{ fontSize: 13, color: "#94a3b8", margin: "4px 0 0" }}>
-                        {pendingUsers.length} usuario{pendingUsers.length !== 1 ? "s" : ""} esperando aprobación
-                    </p>
-                </div>
+            <div className="w-full max-w-7xl mx-auto font-sans">
 
                 {/* Error */}
                 {error && (
-                    <div style={{
-                        display: "flex", justifyContent: "space-between", alignItems: "center",
-                        background: "#fef2f2", border: "1px solid #fca5a5", color: "#dc2626",
-                        borderRadius: 8, padding: "12px 16px", marginBottom: 16, fontSize: 13,
-                    }}>
+                    <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6 text-sm text-red-700">
                         <span>{error}</span>
-                        <button onClick={clearError} style={{ background: "none", border: "none", cursor: "pointer", fontWeight: 700, color: "#dc2626", fontSize: 16 }}>×</button>
+                        <button onClick={clearError} className="text-red-400 hover:text-red-600 text-base ml-4">✕</button>
                     </div>
                 )}
 
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                            Solicitudes pendientes
+                        </h1>
+                        <p className="text-sm text-gray-400 mt-1">
+                            {pendingUsers.length} usuario{pendingUsers.length !== 1 ? "s" : ""} esperando aprobación
+                        </p>
+                    </div>
+                </div>
+
                 {/* Tabla */}
-                <div style={{
-                    background: "#fff", borderRadius: 12,
-                    border: "1px solid #e2e8f0", overflow: "hidden",
-                }}>
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+
                     {loading && pendingUsers.length === 0 ? (
-                        <div style={{ padding: "60px 20px", textAlign: "center", color: "#94a3b8", fontSize: 14 }}>
-                            Cargando solicitudes…
+                        <div className="flex flex-col items-center py-20 gap-3">
+                            <div className="w-8 h-8 rounded-full border-[3px] border-gray-100 border-t-orange-500 animate-spin" />
+                            <p className="text-sm text-gray-400">Cargando solicitudes…</p>
                         </div>
                     ) : pendingUsers.length === 0 ? (
-                        <div style={{ padding: "60px 20px", textAlign: "center" }}>
-                            <div style={{ fontSize: 32, marginBottom: 10 }}>✅</div>
-                            <div style={{ fontWeight: 600, color: "#475569", fontSize: 14 }}>Sin solicitudes pendientes</div>
-                            <div style={{ color: "#94a3b8", fontSize: 13, marginTop: 4 }}>Todos los usuarios han sido procesados.</div>
+                        <div className="text-center py-20">
+                            <p className="text-5xl mb-3">✅</p>
+                            <p className="font-semibold text-gray-500 text-sm">Sin solicitudes pendientes</p>
+                            <p className="text-gray-400 text-xs mt-1">Todos los usuarios han sido procesados.</p>
                         </div>
                     ) : (
-                        <div style={{ overflowX: "auto" }}>
-                            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm border-collapse">
+
                                 <thead>
-                                    <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-                                        {["Nombre", "Usuario", "Correo", "DPI", "Teléfono", "Trabajo", "Ingreso", "Acciones"].map(h => (
-                                            <th key={h} style={{
-                                                padding: "12px 16px", textAlign: "left", fontSize: 10,
-                                                fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#94a3b8",
-                                            }}>{h}</th>
+                                    <tr className="bg-gray-50 border-b border-gray-100">
+                                        {["Nombre", "Usuario", "Correo", "DPI", "Teléfono", "Trabajo", "Ingreso", "Acciones"].map((h) => (
+                                            <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                                                {h}
+                                            </th>
                                         ))}
                                     </tr>
                                 </thead>
+
                                 <tbody>
-                                    {pendingUsers.map((user, i) => (
-                                        <tr key={user.Id} style={{
-                                            borderBottom: "1px solid #f1f5f9",
-                                            background: i % 2 === 0 ? "#fff" : "#fafafa",
-                                            transition: "background 150ms",
-                                        }}
-                                            onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
-                                            onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? "#fff" : "#fafafa"}
-                                        >
-                                            <td style={{ padding: "12px 16px" }}>
-                                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                    <div style={{
-                                                        width: 32, height: 32, borderRadius: "50%",
-                                                        background: "#eef2ff", color: "#4f46e5",
-                                                        fontWeight: 700, fontSize: 13,
-                                                        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                                                    }}>
+                                    {pendingUsers.map((user) => (
+                                        <tr key={user.Id} className="border-b border-gray-50 hover:bg-orange-50/40 transition-colors">
+
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-full bg-orange-100 text-orange-600 font-bold text-sm flex items-center justify-center">
                                                         {user.Name?.charAt(0).toUpperCase()}
                                                     </div>
-                                                    <span style={{ fontWeight: 600, color: "#0f172a" }}>{user.Name}</span>
+                                                    <span className="font-semibold text-gray-900">
+                                                        {user.Name}
+                                                    </span>
                                                 </div>
                                             </td>
-                                            <td style={{ padding: "12px 16px" }}>
-                                                <span style={{ fontFamily: "monospace", fontSize: 12, background: "#f1f5f9", color: "#475569", padding: "2px 8px", borderRadius: 4 }}>
+
+                                            <td className="px-4 py-3">
+                                                <span className="font-mono text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
                                                     @{user.Username}
                                                 </span>
                                             </td>
-                                            <td style={{ padding: "12px 16px", color: "#475569" }}>{user.Email}</td>
-                                            <td style={{ padding: "12px 16px" }}>
-                                                <span style={{ fontFamily: "monospace", fontSize: 12, background: "#f1f5f9", color: "#475569", padding: "2px 8px", borderRadius: 4 }}>
+
+                                            <td className="px-4 py-3 text-gray-500">
+                                                {user.Email}
+                                            </td>
+
+                                            <td className="px-4 py-3">
+                                                <span className="font-mono text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
                                                     {user.DPI}
                                                 </span>
                                             </td>
-                                            <td style={{ padding: "12px 16px", color: "#475569" }}>{user.Phone}</td>
-                                            <td style={{ padding: "12px 16px", color: "#475569" }}>{user.Job}</td>
-                                            <td style={{ padding: "12px 16px", fontWeight: 600, color: "#0f172a" }}>
+
+                                            <td className="px-4 py-3 text-gray-500">
+                                                {user.Phone}
+                                            </td>
+
+                                            <td className="px-4 py-3 text-gray-500">
+                                                {user.Job}
+                                            </td>
+
+                                            <td className="px-4 py-3 font-semibold text-gray-900">
                                                 Q {Number(user.MonthlyIncome || 0).toLocaleString("es-GT", { minimumFractionDigits: 2 })}
                                             </td>
-                                            <td style={{ padding: "12px 16px" }}>
-                                                <button onClick={() => setSelected(user)} style={{
-                                                    padding: "6px 14px", borderRadius: 6,
-                                                    border: "1px solid #e0e7ff", background: "#eef2ff",
-                                                    fontSize: 12, fontWeight: 600, cursor: "pointer",
-                                                    color: "#4f46e5", transition: "all 150ms",
-                                                }}
-                                                    onMouseEnter={e => e.currentTarget.style.background = "#e0e7ff"}
-                                                    onMouseLeave={e => e.currentTarget.style.background = "#eef2ff"}
+
+                                            <td className="px-4 py-3">
+                                                <button
+                                                    onClick={() => setSelected(user)}
+                                                    className="px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-xs font-semibold text-orange-600 hover:bg-orange-100 hover:border-orange-300 transition-colors"
                                                 >
                                                     Revisar →
                                                 </button>
                                             </td>
+
                                         </tr>
                                     ))}
                                 </tbody>
+
                             </table>
                         </div>
                     )}
                 </div>
             </div>
 
+            {/* Modal */}
             {selected && (
                 <ApproveModal
                     user={selected}
@@ -137,5 +141,5 @@ export const UsersPage = () => {
                 />
             )}
         </>
-    )
-}
+    );
+};

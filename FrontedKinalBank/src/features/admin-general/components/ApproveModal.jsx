@@ -1,81 +1,70 @@
-import { useState } from "react"
+import { useState } from "react";
 
 export const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
-    const [role, setRole] = useState("CLIENT")
+    const [role, setRole] = useState("CLIENT");
 
     const fields = [
-        ["Usuario", user.Username],
-        ["DPI", user.DPI],
-        ["Teléfono", user.Phone],
-        ["Trabajo", user.Job],
+        ["Usuario",         user.Username],
+        ["DPI",             user.DPI],
+        ["Teléfono",        user.Phone],
+        ["Trabajo",         user.Job],
         ["Ingreso mensual", `Q ${Number(user.MonthlyIncome || 0).toLocaleString("es-GT", { minimumFractionDigits: 2 })}`],
-        ["Dirección", user.Address],
-    ]
+        ["Dirección",       user.Address],
+    ];
 
     return (
-        <div style={{
-            position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            zIndex: 200, padding: 16,
-        }}>
-            <div style={{
-                background: "#fff", borderRadius: 14, width: "100%", maxWidth: 500,
-                border: "1px solid #e2e8f0", overflow: "hidden",
-            }}>
+        <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={onClose}
+        >
+            <div
+                className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+            >
                 {/* Header */}
-                <div style={{
-                    display: "flex", alignItems: "center", justifyContent: "space-between",
-                    padding: "18px 24px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc",
-                }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#94a3b8" }}>
-                        Aprobar solicitud
-                    </span>
-                    <button onClick={onClose} style={{
-                        background: "none", border: "none", fontSize: 18,
-                        cursor: "pointer", color: "#94a3b8", lineHeight: 1, padding: 4,
-                    }}>×</button>
+                <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                    <h2 className="text-lg font-semibold text-gray-900">Aprobar solicitud</h2>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600 text-xl leading-none p-1 transition-colors"
+                    >
+                        ✕
+                    </button>
                 </div>
 
-                {/* User info */}
-                <div style={{ padding: "20px 24px 0" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
-                        <div style={{
-                            width: 44, height: 44, borderRadius: "50%",
-                            background: "#eef2ff", color: "#4f46e5",
-                            fontWeight: 700, fontSize: 16,
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                        }}>
+                {/* Body */}
+                <div className="px-6 py-5 space-y-4">
+                    {/* Avatar + nombre */}
+                    <div className="flex items-center gap-3 mb-1">
+                        <div className="w-11 h-11 rounded-full bg-orange-100 text-orange-600 font-bold text-base flex items-center justify-center flex-shrink-0">
                             {user.Name?.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            <div style={{ fontWeight: 600, color: "#0f172a", fontSize: 15 }}>{user.Name}</div>
-                            <div style={{ color: "#64748b", fontSize: 13 }}>{user.Email}</div>
+                            <p className="font-semibold text-gray-900 text-sm">{user.Name}</p>
+                            <p className="text-xs text-gray-400">{user.Email}</p>
                         </div>
                     </div>
 
-                    <div style={{
-                        display: "grid", gridTemplateColumns: "1fr 1fr",
-                        gap: "12px 20px", background: "#f8fafc",
-                        borderRadius: 8, padding: 16, marginBottom: 16,
-                        border: "1px solid #f1f5f9",
-                    }}>
+                    {/* Grid de campos */}
+                    <div className="grid grid-cols-2 gap-x-5 gap-y-3 bg-gray-50 rounded-xl p-4 border border-gray-100">
                         {fields.map(([label, val]) => (
                             <div key={label}>
-                                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#94a3b8", marginBottom: 2 }}>{label}</div>
-                                <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 500 }}>{val}</div>
+                                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+                                <p className="text-sm text-gray-900 font-medium">{val}</p>
                             </div>
                         ))}
                     </div>
 
-                    <div style={{ marginBottom: 20 }}>
-                        <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#64748b", display: "block", marginBottom: 6 }}>
+                    {/* Select de rol */}
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                             Asignar rol
                         </label>
-                        <select value={role} onChange={(e) => setRole(e.target.value)} style={{
-                            width: "100%", padding: "9px 12px", border: "1px solid #e2e8f0",
-                            borderRadius: 8, fontSize: 13, color: "#0f172a",
-                            background: "#fff", outline: "none", cursor: "pointer",
-                        }}>
+                        <select
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-orange-500 text-sm outline-none transition-colors bg-white"
+                        >
                             <option value="CLIENT">CLIENT</option>
                             <option value="ADMIN">ADMIN</option>
                         </select>
@@ -83,26 +72,22 @@ export const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
                 </div>
 
                 {/* Footer */}
-                <div style={{
-                    display: "flex", justifyContent: "flex-end", gap: 10,
-                    padding: "16px 24px", borderTop: "1px solid #f1f5f9", background: "#f8fafc",
-                }}>
-                    <button onClick={onClose} style={{
-                        padding: "9px 18px", borderRadius: 8, border: "1px solid #e2e8f0",
-                        background: "#fff", fontSize: 13, cursor: "pointer", color: "#475569", fontWeight: 500,
-                    }}>
+                <div className="flex justify-end gap-3 px-6 pb-6 pt-2 border-t border-gray-100">
+                    <button
+                        onClick={onClose}
+                        className="px-5 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
                         Cancelar
                     </button>
-                    <button onClick={() => onConfirm(user.Id, role)} disabled={loading} style={{
-                        padding: "9px 18px", borderRadius: 8, border: "none",
-                        background: loading ? "#a5b4fc" : "#4f46e5",
-                        color: "#fff", fontSize: 13, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer",
-                        transition: "background 150ms",
-                    }}>
+                    <button
+                        onClick={() => onConfirm(user.Id, role)}
+                        disabled={loading}
+                        className="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold disabled:opacity-60 transition-colors"
+                    >
                         {loading ? "Aprobando…" : "✓ Aprobar"}
                     </button>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

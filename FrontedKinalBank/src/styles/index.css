@@ -4,10 +4,16 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
+/* ─── Body base — sin flex, sin centrado ─────────────────── */
 body {
-  background: linear-gradient(135deg, #f5f7fb 0%, #eef2ff 100%);
   min-height: 100vh;
   color: #1f2937;
+}
+
+/* ─── Solo para la pantalla de login/registro ────────────── */
+.auth-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fb 0%, #eef2ff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,14 +113,8 @@ button:active {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .field-label {
@@ -146,37 +146,25 @@ button:active {
   gap: 14px;
 }
 
-.scroll-fields::-webkit-scrollbar {
-  width: 4px;
-}
-
+.scroll-fields::-webkit-scrollbar { width: 4px; }
 .scroll-fields::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-radius: 10px;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 @media (max-width: 768px) {
   .auth-card {
     padding: 2rem 1.5rem !important;
     max-width: 100% !important;
   }
-
-  .two-col {
-    grid-template-columns: 1fr !important;
-  }
+  .two-col { grid-template-columns: 1fr !important; }
 }
 
 @media (max-width: 480px) {
@@ -184,9 +172,5 @@ button:active {
     padding: 1.5rem 1rem !important;
     border-radius: 12px !important;
   }
-
-  body {
-    align-items: flex-start;
-    padding-top: 1rem;
-  }
+  .auth-layout { align-items: flex-start; padding-top: 1rem; }
 }

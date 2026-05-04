@@ -8,14 +8,7 @@ export const AuthPage = () => {
     const [isRegister, setIsRegister] = useState(false)
 
     return (
-        <div style={{
-            width: "100%",
-            minHeight: "100vh",
-            padding: "2rem 1rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-        }}>
+        <div className="auth-layout">  {/* ← solo este cambio */}
             <div className="auth-card fade-in" style={{
                 width: "100%",
                 maxWidth: "680px",
