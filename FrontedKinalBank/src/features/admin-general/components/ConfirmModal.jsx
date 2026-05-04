@@ -24,7 +24,7 @@ export const ConfirmModal = ({ account, onClose, onConfirm, loading }) => (
                 <button
                     onClick={onConfirm}
                     disabled={loading}
-                    className="px-5 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold disabled:opacity-60 transition-colors"
+                    className="px-5 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-semibold disabled:opacity-60 transition-colors"
                 >
                     {loading ? "Eliminando…" : "Eliminar"}
                 </button>

@@ -10,11 +10,10 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
             : { accountType: "AHORRO", currency: "GTQ", balance: 0, ownerId: "" }
     );
 
-    // Estado del buscador de usuario (solo en modo crear)
-    const [search, setSearch]           = useState("");
-    const [results, setResults]         = useState([]);
+    const [search, setSearch]             = useState("");
+    const [results, setResults]           = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [searching, setSearching]     = useState(false);
+    const [searching, setSearching]       = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const debounceRef = useRef(null);
 
@@ -22,7 +21,6 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
 
     const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
-    // Buscar usuarios con debounce de 350ms
     useEffect(() => {
         if (isEdit) return;
 
@@ -96,7 +94,6 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                 {/* Body */}
                 <div className="px-6 py-5 space-y-4">
 
-                    {/* Buscador de propietario (solo crear) */}
                     {!isEdit && (
                         <Field label="Propietario">
                             <div className="relative">
@@ -111,11 +108,9 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                                         placeholder="Buscar por nombre o DPI…"
                                         autoComplete="off"
                                     />
-
-                                    {/* Indicador de búsqueda o usuario seleccionado */}
                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
                                         {searching && (
-                                            <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-200 border-t-orange-400 animate-spin" />
+                                            <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-200 border-t-blue-500 animate-spin" />
                                         )}
                                         {selectedUser && !searching && (
                                             <button
@@ -129,7 +124,6 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                                     </div>
                                 </div>
 
-                                {/* Dropdown de resultados */}
                                 {showDropdown && (
                                     <ul className="absolute z-10 left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-48 overflow-y-auto">
                                         {results.length === 0 ? (
@@ -140,9 +134,9 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                                             <li
                                                 key={u.Id}
                                                 onClick={() => selectUser(u)}
-                                                className="px-4 py-2.5 cursor-pointer hover:bg-orange-50 transition-colors flex items-center gap-3"
+                                                className="px-4 py-2.5 cursor-pointer hover:bg-blue-50 transition-colors flex items-center gap-3"
                                             >
-                                                <div className="w-7 h-7 rounded-full bg-orange-100 text-orange-600 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                                                <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center flex-shrink-0">
                                                     {u.Name?.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
@@ -155,11 +149,10 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                                 )}
                             </div>
 
-                            {/* Chip de usuario seleccionado */}
                             {selectedUser && (
-                                <div className="flex items-center gap-2 mt-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-lg">
-                                    <span className="text-xs text-orange-700 font-semibold">{selectedUser.Name}</span>
-                                    <span className="text-[10px] text-orange-400 font-mono">— {selectedUser.DPI}</span>
+                                <div className="flex items-center gap-2 mt-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <span className="text-xs text-blue-800 font-semibold">{selectedUser.Name}</span>
+                                    <span className="text-[10px] text-blue-400 font-mono">— {selectedUser.DPI}</span>
                                 </div>
                             )}
                         </Field>
@@ -204,7 +197,7 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                         </Field>
                     )}
 
-                    {err && <p className="text-xs text-orange-500">{err}</p>}
+                    {err && <p className="text-xs text-red-500">{err}</p>}
                 </div>
 
                 {/* Footer */}
@@ -218,7 +211,7 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="px-5 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 disabled:opacity-60 transition-colors"
+                        className="px-5 py-2 rounded-lg bg-blue-800 text-white text-sm font-semibold hover:bg-blue-900 disabled:opacity-60 transition-colors"
                     >
                         {loading ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear cuenta"}
                     </button>
@@ -240,4 +233,4 @@ function Field({ label, children }) {
 }
 
 const inputClass = () =>
-    `w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-orange-500 text-sm outline-none transition-colors bg-white`;
+    `w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 text-sm outline-none transition-colors bg-white`;
