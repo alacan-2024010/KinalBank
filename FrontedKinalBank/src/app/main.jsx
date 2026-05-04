@@ -4,6 +4,7 @@ import { ThemeProvider } from '@material-tailwind/react'
 import { App } from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import "../styles/index.css";
+import "../styles/adminGeneral.css";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
