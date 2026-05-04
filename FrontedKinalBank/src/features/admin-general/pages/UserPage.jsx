@@ -70,11 +70,11 @@ const ApproveModal = ({ user, onClose, onConfirm, loading }) => {
 
 /* ─── Página de Usuarios ──────────────────────────────── */
 export const UsersPage = () => {
-  const { pendingUsers = [], loading, error, fetchPendingUsers, approveUser, clearError } = useUsersStore();
+  const { pendingUsers = [], loading, error, getPendingUsers, approveUser, clearError } = useUsersStore();
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    fetchPendingUsers();
+    getPendingUsers();
   }, []);
 
   const handleApprove = async (userId, role) => {
