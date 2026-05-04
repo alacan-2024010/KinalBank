@@ -8,7 +8,7 @@ export const createAdmin = async () => {
 
   if (admin) return;
 
-  const hash = await argon2.hash('admin123');
+  const hash = await argon2.hash('ADMINB');
 
   await User.create({
     name: 'Admin',
