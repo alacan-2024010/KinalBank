@@ -21,8 +21,8 @@ export const ProtectedRoute = ({ children, allowedRoles = [], redirectTo = "/" }
     console.log("PAYLOAD ROLE:", role, "ALLOWED:", allowedRoles)  // 👈
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
-      if (role === "ADMIN_ROLE") return <Navigate to="/dashboard/users" replace />;
-      if (role === "CLIENT_ROLE") return <Navigate to="/dashboard/client" replace />;
+      if (role === "ADMIN") return <Navigate to="/dashboard/users" replace />;
+      if (role === "CLIENT") return <Navigate to="/dashboard/client" replace />;
       return <Navigate to={redirectTo} replace />;
     }
 
