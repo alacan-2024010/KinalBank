@@ -1,29 +1,37 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "../../features/auth/store/authStore"
 
 export const Navbar = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+    const logout = useAuthStore((state) => state.logout)
+
+    const handleLogout = () => {
+        logout()
+        navigate("/", { replace: true })
+    }
 
     return (
-        <nav className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
-            <nav className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
-                <div className="px-6 h-16 flex items-center justify-between">
-                    {/* Logo */}
-                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/dashboard")}>
-                        <img 
-                            src="/src/assets/img/KinalBank.png" 
-                            alt="KinalBank" 
-                            className="h-10 w-auto object-contain"
-                        />
-                    </div>
-                    {/* Logout */}
-                    <button
-                        onClick={() => navigate("/")}
-                        className="text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
-                    >
-                        Cerrar sesión
-                    </button>
-                </div>
-            </nav>
-        </nav>
+        <header style={{
+            height: 60, background: "#0f172a", display: "flex",
+            alignItems: "center", justifyContent: "space-between",
+            padding: "0 24px", position: "sticky", top: 0, zIndex: 100,
+            borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0,
+        }}>
+            <div style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                onClick={() => navigate("/dashboard")}>
+                <img src="/src/assets/img/KinalBank.png" alt="KinalBank"
+                    style={{ height: 36, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+            </div>
+            <button onClick={handleLogout} style={{
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                color: "rgba(255,255,255,0.7)", borderRadius: 8, padding: "7px 16px",
+                fontSize: 13, cursor: "pointer", fontWeight: 500, transition: "all 150ms",
+            }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.06)"}
+            >
+                Cerrar sesión
+            </button>
+        </header>
     )
 }
