@@ -3,7 +3,11 @@ import { AuthPage } from "../../features/auth/pages/AuthPage.jsx";
 import { AdminGeneralLayout } from "../../features/admin-general/layout/AdminGeneralLayout.jsx";
 import { AccountsPage } from "../../features/admin-general/pages/AccountsPage.jsx";
 import { UsersPage } from "../../features/admin-general/pages/UserPage.jsx";
-import { ClientDashboardPage } from "../../features/client/pages/ClientDashboardPage.jsx";
+import { ClientLayout } from "../../features/client/layout/ClientLayout.jsx";
+import { ClientHomePage } from "../../features/client/pages/ClientHomePage.jsx";
+import { ClientAccountsPage } from "../../features/client/pages/ClientAccountsPage.jsx";
+import { ClientTransactionsPage } from "../../features/client/pages/ClientTransactionsPage.jsx";
+import { ClientTransferPage } from "../../features/client/pages/ClientTransferPage.jsx";
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { RoleRedirect } from "./RoleRedirect.jsx";
 
@@ -32,10 +36,15 @@ export const AppRoutes = () => {
                 path="/dashboard/client"
                 element={
                     <ProtectedRoute allowedRoles={["CLIENT"]}>
-                        <ClientDashboardPage />
+                        <ClientLayout />
                     </ProtectedRoute>
                 }
-            />
+            >
+                <Route index element={<ClientHomePage />} />
+                <Route path="accounts"     element={<ClientAccountsPage />} />
+                <Route path="transactions" element={<ClientTransactionsPage />} />
+                <Route path="transfer"     element={<ClientTransferPage />} />
+            </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
