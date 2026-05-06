@@ -16,6 +16,14 @@ const axiosAccount = axios.create({
   }
 })
 
+const axiosTransaction = axios.create({
+  baseURL: import.meta.env.VITE_TRANSACTION_URL,
+  timeout: 8000,
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+
 axiosAuth.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
 
@@ -36,4 +44,14 @@ axiosAccount.interceptors.request.use((config) => {
     return config;
 });
 
-export { axiosAuth , axiosAccount};
+axiosTransaction.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) { 
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
+export { axiosAuth , axiosAccount, axiosTransaction};
