@@ -54,7 +54,9 @@ export const ClientTransferPage = () => {
     };
 
     const selectedAccount     = accounts.find(a => a._id === form.fromAccount);
-    const toAccount           = accounts.find(a => a._id === form.toAccount);
+    const toAccount = accounts.find(
+        a => a.accountNumber === form.toAccount
+    );
     const symbol              = getCurrencySymbol(selectedAccount?.currency);
     const destinationAccounts = activeAccounts.filter(a => a._id !== form.fromAccount);
     const canSubmit           = !!(form.fromAccount && form.toAccount && form.amount && !loadingTransfer);
@@ -78,184 +80,170 @@ export const ClientTransferPage = () => {
 
             <div className="max-w-2xl mx-auto space-y-5">
 
-                {/* Encabezado */}
+                {/* HEADER */}
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900">Transferir fondos</h1>
+                    <h1 className="text-3xl font-extrabold text-slate-900">
+                        Transferir fondos
+                    </h1>
                     <p className="text-base text-slate-600 mt-1">
                         Mueve dinero entre tus cuentas activas de forma segura e inmediata.
                     </p>
                 </div>
 
-                {/* Alertas */}
+                {/* ALERTAS */}
                 {transferSuccess && (
-                    <div className="bg-green-50 border border-green-100 text-green-700 text-base rounded-2xl px-5 py-4 flex items-center gap-3 font-medium">
+                    <div className="bg-green-50 border border-green-100 text-green-700 rounded-2xl px-5 py-4 flex items-center gap-3 font-medium">
                         <span className="text-xl">✅</span> {transferSuccess}
                     </div>
                 )}
+
                 {transferError && (
-                    <div className="bg-red-50 border border-red-100 text-red-600 text-base rounded-2xl px-5 py-4 flex items-center gap-3 font-medium">
+                    <div className="bg-red-50 border border-red-100 text-red-600 rounded-2xl px-5 py-4 flex items-center gap-3 font-medium">
                         <span className="text-xl">⚠️</span> {transferError}
                     </div>
                 )}
 
-                {/* Card principal */}
+                {/* CARD */}
                 <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
 
-                    {/* Header de la card */}
+                    {/* HEADER CARD */}
                     <div className="bg-slate-900 px-7 py-6 flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl flex-shrink-0">
+                        <div className="w-11 h-11 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">
                             💸
                         </div>
                         <div>
-                            <p className="text-white font-bold text-base">Nueva transferencia</p>
-                            <p className="text-white/40 text-sm mt-0.5">Límite: 2,000 por operación · 10,000 diarios</p>
+                            <p className="text-white font-bold">Nueva transferencia</p>
+                            <p className="text-white/40 text-sm">
+                                Límite: 2,000 por operación · 10,000 diarios
+                            </p>
                         </div>
                     </div>
 
                     <div className="p-7 space-y-6">
 
-                        {/* Fila: origen + destino */}
+                        {/* ORIGEN + DESTINO */}
                         <div className="grid grid-cols-2 gap-5">
 
-                            {/* Cuenta origen */}
+                            {/* ORIGEN */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">
                                     Cuenta origen
                                 </label>
-                                <div className="relative">
-                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none">💳</span>
+
+                                <div className="flex items-center gap-2">
+                                    <span className="text-lg">💳</span>
                                     <select
                                         name="fromAccount"
                                         value={form.fromAccount}
                                         onChange={handleChange}
-                                        className="w-full border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 appearance-none cursor-pointer"
+                                        className="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm"
                                     >
                                         <option value="">Selecciona…</option>
                                         {activeAccounts.map(acc => (
                                             <option key={acc._id} value={acc._id}>
-                                                {acc.accountNumber} · {getCurrencySymbol(acc.currency)}
-                                                {Number(acc.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })} ({acc.currency})
+                                                {acc.accountNumber} · {getCurrencySymbol(acc.currency)}{" "}
+                                                {Number(acc.balance).toLocaleString("es-GT", {
+                                                    minimumFractionDigits: 2,
+                                                })}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
-                                {selectedAccount && (
-                                    <p className="text-xs text-slate-400 mt-1.5">
-                                        Disponible: {symbol} {Number(selectedAccount.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })} {selectedAccount.currency}
-                                    </p>
-                                )}
                             </div>
 
-                            {/* Cuenta destino */}
+                            {/* DESTINO */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">
                                     Cuenta destino
                                 </label>
-                                <div className="relative">
-                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none">🏦</span>
-                                    <select
+
+                                <div className="flex items-center gap-2">
+                                    <span className="text-lg">🏦</span>
+                                    <input
+                                        type="text"
                                         name="toAccount"
                                         value={form.toAccount}
                                         onChange={handleChange}
-                                        disabled={!form.fromAccount}
-                                        className="w-full border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <option value="">Selecciona…</option>
-                                        {destinationAccounts.map(acc => (
-                                            <option key={acc._id} value={acc._id}>
-                                                {acc.accountNumber} ({acc.currency})
-                                            </option>
-                                        ))}
-                                    </select>
+                                        placeholder="Número de cuenta destino"
+                                        className="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm"
+                                    />
                                 </div>
+
                                 {form.fromAccount && destinationAccounts.length === 0 && (
-                                    <p className="text-xs text-amber-500 mt-1.5">Sin cuentas destino disponibles.</p>
+                                    <p className="text-xs text-amber-500 mt-1">
+                                        Sin cuentas destino disponibles.
+                                    </p>
                                 )}
                             </div>
                         </div>
 
-                        {/* Aviso de conversión de divisa */}
+                        {/* CONVERSIÓN */}
                         {willConvert && (
                             <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex items-center gap-2.5">
-                                <span className="text-lg flex-shrink-0">🔄</span>
+                                <span>🔄</span>
                                 <p className="text-xs text-amber-700 font-medium">
-                                    Se aplicará conversión automática de{" "}
+                                    Conversión automática de{" "}
                                     <strong>{selectedAccount.currency}</strong> →{" "}
-                                    <strong>{toAccount.currency}</strong> al tipo de cambio vigente.
+                                    <strong>{toAccount.currency}</strong>
                                 </p>
                             </div>
                         )}
 
-                        {/* Monto — badge de moneda separado */}
+                        {/* MONTO */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">
                                 Monto
                             </label>
+
                             <div className="flex items-center gap-3">
-                                {/* Badge de moneda: muestra símbolo + código */}
-                                <div className="flex-shrink-0 h-14 px-4 flex flex-col items-center justify-center bg-slate-100 border border-slate-200 rounded-xl min-w-[56px]">
-                                    <span className="text-base font-extrabold text-slate-700 font-mono leading-none">
-                                        {symbol}
-                                    </span>
+                                <div className="h-14 px-4 flex flex-col items-center justify-center bg-slate-100 border rounded-xl">
+                                    <span className="font-bold">{symbol}</span>
                                     {selectedAccount && (
-                                        <span className="text-[9px] text-slate-400 font-semibold tracking-wider mt-0.5">
+                                        <span className="text-[10px] text-slate-400">
                                             {selectedAccount.currency}
                                         </span>
                                     )}
                                 </div>
+
                                 <input
                                     type="number"
                                     name="amount"
                                     value={form.amount}
                                     onChange={handleChange}
                                     placeholder="0.00"
-                                    min="0.01" max="2000" step="0.01"
-                                    className="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-3xl font-extrabold text-slate-900 placeholder-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 h-14"
+                                    className="flex-1 border rounded-xl px-4 py-3 text-3xl font-bold"
                                 />
                             </div>
 
-                            {/* Barra de progreso */}
                             {Number(form.amount) > 0 && (
                                 <div className="mt-3">
                                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                                         <div
-                                            className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                                            className={`h-full ${barColor}`}
                                             style={{ width: `${amountPct}%` }}
                                         />
                                     </div>
-                                    <p className="text-xs text-slate-400 mt-1.5">
-                                        {amountPct.toFixed(0)}% del límite por transferencia
-                                    </p>
                                 </div>
                             )}
                         </div>
 
-                        {/* Descripción */}
-                        <div>
-                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                                Descripción <span className="text-slate-300 font-normal normal-case">· opcional</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="description"
-                                value={form.description}
-                                onChange={handleChange}
-                                placeholder="Ej. Pago de servicio, préstamo…"
-                                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400"
-                            />
-                        </div>
+                        {/* DESCRIPCIÓN */}
+                        <input
+                            type="text"
+                            name="description"
+                            value={form.description}
+                            onChange={handleChange}
+                            placeholder="Descripción opcional"
+                            className="w-full border rounded-xl px-4 py-3 text-sm"
+                        />
 
-                        {/* Botón */}
+                        {/* BOTÓN */}
                         <button
                             onClick={handleSubmit}
                             disabled={!canSubmit}
-                            className={`w-full font-bold text-base py-4 rounded-xl transition-all ${
-                                canSubmit
-                                    ? "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20 cursor-pointer"
-                                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                            }`}
+                            className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold disabled:opacity-40"
                         >
-                            {loadingTransfer ? "Procesando…" : "Continuar con la transferencia →"}
+                            {loadingTransfer ? "Procesando…" : "Continuar"}
                         </button>
                     </div>
                 </div>
