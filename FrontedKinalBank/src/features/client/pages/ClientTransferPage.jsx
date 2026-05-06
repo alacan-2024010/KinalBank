@@ -1,183 +1,285 @@
 import { useEffect, useState } from "react";
 import { useClientStore } from "../store/clientStore.js";
+import { TransferModal } from "../components/TransferModal.jsx";
+
+const CURRENCY_SYMBOLS = {
+    GTQ: "Q",
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    MXN: "MX$",
+    CAD: "C$",
+    JPY: "¥",
+    CHF: "Fr",
+    BRL: "R$",
+    COP: "COL$",
+};
+
+const getCurrencySymbol = (currency) =>
+    CURRENCY_SYMBOLS[currency] ?? currency ?? "Q";
 
 export const ClientTransferPage = () => {
     const {
-        accounts,
-        loadingTransfer,
-        transferError,
-        transferSuccess,
-        fetchMyAccounts,
-        transfer,
-        clearTransferState,
+        accounts, loadingTransfer, transferError, transferSuccess,
+        fetchMyAccounts, transfer, clearTransferState,
     } = useClientStore();
 
-    const [form, setForm] = useState({
-        fromAccount: "",   // _id de la cuenta origen
-        toAccount: "",     // _id de la cuenta destino
-        amount: "",
-        description: "",
-    });
+    const [form, setForm] = useState({ fromAccount: "", toAccount: "", amount: "", description: "" });
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         fetchMyAccounts();
         return () => clearTransferState();
     }, []);
 
-    const activeAccounts = accounts.filter(a => a.status === "ACTIVA");
+    const activeAccounts      = accounts.filter(a => a.status === "ACTIVA");
+    const handleChange        = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
-    const handleChange = (e) =>
-        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (!form.fromAccount || !form.toAccount || !form.amount) return;
         clearTransferState();
-
-        const result = await transfer({
-            type: "TRANSFERENCIA",
-            fromAccount: form.fromAccount,
-            toAccount: form.toAccount,
-            amount: Number(form.amount),
-            description: form.description || "Transferencia entre cuentas",
-        });
-
-        if (result.success) {
-            setForm({ fromAccount: "", toAccount: "", amount: "", description: "" });
-        }
+        setShowConfirm(true);
     };
 
-    const selectedAccount = accounts.find(a => a._id === form.fromAccount);
-    const symbol = selectedAccount?.currency === "GTQ" ? "Q" : "$";
+    const handleConfirm = async () => {
+        setShowConfirm(false);
+        const result = await transfer({
+            type:        "TRANSFERENCIA",
+            fromAccount: form.fromAccount,
+            toAccount:   form.toAccount,
+            amount:      Number(form.amount),
+            description: form.description || "Transferencia entre cuentas",
+        });
+        if (result.success) setForm({ fromAccount: "", toAccount: "", amount: "", description: "" });
+    };
 
-    // Cuentas disponibles como destino (todas excepto la origen)
+    const selectedAccount     = accounts.find(a => a._id === form.fromAccount);
+    const toAccount           = accounts.find(a => a._id === form.toAccount);
+    const symbol              = getCurrencySymbol(selectedAccount?.currency);
     const destinationAccounts = activeAccounts.filter(a => a._id !== form.fromAccount);
+    const canSubmit           = !!(form.fromAccount && form.toAccount && form.amount && !loadingTransfer);
+    const amountPct           = Math.min((Number(form.amount) / 2000) * 100, 100);
+    const barColor            = amountPct >= 90 ? "bg-red-500" : amountPct >= 60 ? "bg-amber-400" : "bg-indigo-500";
+
+    // Aviso de conversión si las monedas son distintas
+    const willConvert = selectedAccount && toAccount &&
+        selectedAccount.currency !== toAccount.currency;
 
     return (
-        <div className="max-w-xl mx-auto space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900">Transferir fondos</h1>
-                <p className="text-sm text-gray-400 mt-1">
-                    Transfiere dinero entre tus cuentas activas. Límite: 2,000 por transferencia y 10,000 diarios.
-                </p>
-            </div>
+        <>
+            <TransferModal
+                open={showConfirm}
+                onConfirm={handleConfirm}
+                onCancel={() => setShowConfirm(false)}
+                data={form}
+                accounts={accounts}
+                loading={loadingTransfer}
+            />
 
-            {transferSuccess && (
-                <div className="bg-green-50 border border-green-100 text-green-700 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
-                    <span>✅</span> {transferSuccess}
-                </div>
-            )}
+            <div className="max-w-2xl mx-auto space-y-5">
 
-            {transferError && (
-                <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
-                    <span>⚠️</span> {transferError}
-                </div>
-            )}
-
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
-
-                {/* Cuenta origen */}
+                {/* Encabezado */}
                 <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                        Cuenta origen
-                    </label>
-                    <select
-                        name="fromAccount"
-                        value={form.fromAccount}
-                        onChange={handleChange}
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 bg-white"
-                    >
-                        <option value="">Selecciona una cuenta…</option>
-                        {activeAccounts.map((acc) => (
-                            <option key={acc._id} value={acc._id}>
-                                {acc.accountNumber} — {acc.currency === "GTQ" ? "Q" : "$"}{" "}
-                                {Number(acc.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })} ({acc.currency})
-                            </option>
-                        ))}
-                    </select>
-                    {selectedAccount && (
-                        <p className="text-[11px] text-gray-400 mt-1">
-                            Saldo disponible: {symbol}{" "}
-                            {Number(selectedAccount.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })}
-                        </p>
-                    )}
+                    <h1 className="text-3xl font-extrabold text-slate-900">Transferir fondos</h1>
+                    <p className="text-base text-slate-600 mt-1">
+                        Mueve dinero entre tus cuentas activas de forma segura e inmediata.
+                    </p>
                 </div>
 
-                {/* Cuenta destino */}
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                        Cuenta destino
-                    </label>
-                    <select
-                        name="toAccount"
-                        value={form.toAccount}
-                        onChange={handleChange}
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 bg-white"
-                    >
-                        <option value="">Selecciona cuenta destino…</option>
-                        {destinationAccounts.map((acc) => (
-                            <option key={acc._id} value={acc._id}>
-                                {acc.accountNumber} ({acc.currency})
-                            </option>
-                        ))}
-                    </select>
-                    {form.fromAccount && destinationAccounts.length === 0 && (
-                        <p className="text-[11px] text-amber-500 mt-1">
-                            No tienes otras cuentas activas disponibles como destino.
-                        </p>
-                    )}
-                </div>
-
-                {/* Monto */}
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                        Monto
-                    </label>
-                    <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-mono">
-                            {selectedAccount ? symbol : "Q"}
-                        </span>
-                        <input
-                            type="number"
-                            name="amount"
-                            value={form.amount}
-                            onChange={handleChange}
-                            placeholder="0.00"
-                            min="0.01"
-                            max="2000"
-                            step="0.01"
-                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 pl-8 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400"
-                        />
+                {/* Alertas */}
+                {transferSuccess && (
+                    <div className="bg-green-50 border border-green-100 text-green-700 text-base rounded-2xl px-5 py-4 flex items-center gap-3 font-medium">
+                        <span className="text-xl">✅</span> {transferSuccess}
                     </div>
-                    <p className="text-[11px] text-gray-300 mt-1">Máximo 2,000 por transferencia</p>
+                )}
+                {transferError && (
+                    <div className="bg-red-50 border border-red-100 text-red-600 text-base rounded-2xl px-5 py-4 flex items-center gap-3 font-medium">
+                        <span className="text-xl">⚠️</span> {transferError}
+                    </div>
+                )}
+
+                {/* Card principal */}
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
+                    {/* Header de la card */}
+                    <div className="bg-slate-900 px-7 py-6 flex items-center gap-4">
+                        <div className="w-11 h-11 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl flex-shrink-0">
+                            💸
+                        </div>
+                        <div>
+                            <p className="text-white font-bold text-base">Nueva transferencia</p>
+                            <p className="text-white/40 text-sm mt-0.5">Límite: 2,000 por operación · 10,000 diarios</p>
+                        </div>
+                    </div>
+
+                    <div className="p-7 space-y-6">
+
+                        {/* Fila: origen + destino */}
+                        <div className="grid grid-cols-2 gap-5">
+
+                            {/* Cuenta origen */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                                    Cuenta origen
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none">💳</span>
+                                    <select
+                                        name="fromAccount"
+                                        value={form.fromAccount}
+                                        onChange={handleChange}
+                                        className="w-full border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 appearance-none cursor-pointer"
+                                    >
+                                        <option value="">Selecciona…</option>
+                                        {activeAccounts.map(acc => (
+                                            <option key={acc._id} value={acc._id}>
+                                                {acc.accountNumber} · {getCurrencySymbol(acc.currency)}
+                                                {Number(acc.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })} ({acc.currency})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {selectedAccount && (
+                                    <p className="text-xs text-slate-400 mt-1.5">
+                                        Disponible: {symbol} {Number(selectedAccount.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })} {selectedAccount.currency}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Cuenta destino */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                                    Cuenta destino
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-lg pointer-events-none">🏦</span>
+                                    <select
+                                        name="toAccount"
+                                        value={form.toAccount}
+                                        onChange={handleChange}
+                                        disabled={!form.fromAccount}
+                                        className="w-full border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <option value="">Selecciona…</option>
+                                        {destinationAccounts.map(acc => (
+                                            <option key={acc._id} value={acc._id}>
+                                                {acc.accountNumber} ({acc.currency})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {form.fromAccount && destinationAccounts.length === 0 && (
+                                    <p className="text-xs text-amber-500 mt-1.5">Sin cuentas destino disponibles.</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Aviso de conversión de divisa */}
+                        {willConvert && (
+                            <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex items-center gap-2.5">
+                                <span className="text-lg flex-shrink-0">🔄</span>
+                                <p className="text-xs text-amber-700 font-medium">
+                                    Se aplicará conversión automática de{" "}
+                                    <strong>{selectedAccount.currency}</strong> →{" "}
+                                    <strong>{toAccount.currency}</strong> al tipo de cambio vigente.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Monto — badge de moneda separado */}
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                                Monto
+                            </label>
+                            <div className="flex items-center gap-3">
+                                {/* Badge de moneda: muestra símbolo + código */}
+                                <div className="flex-shrink-0 h-14 px-4 flex flex-col items-center justify-center bg-slate-100 border border-slate-200 rounded-xl min-w-[56px]">
+                                    <span className="text-base font-extrabold text-slate-700 font-mono leading-none">
+                                        {symbol}
+                                    </span>
+                                    {selectedAccount && (
+                                        <span className="text-[9px] text-slate-400 font-semibold tracking-wider mt-0.5">
+                                            {selectedAccount.currency}
+                                        </span>
+                                    )}
+                                </div>
+                                <input
+                                    type="number"
+                                    name="amount"
+                                    value={form.amount}
+                                    onChange={handleChange}
+                                    placeholder="0.00"
+                                    min="0.01" max="2000" step="0.01"
+                                    className="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-3xl font-extrabold text-slate-900 placeholder-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 h-14"
+                                />
+                            </div>
+
+                            {/* Barra de progreso */}
+                            {Number(form.amount) > 0 && (
+                                <div className="mt-3">
+                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                                            style={{ width: `${amountPct}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-1.5">
+                                        {amountPct.toFixed(0)}% del límite por transferencia
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Descripción */}
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                                Descripción <span className="text-slate-300 font-normal normal-case">· opcional</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="description"
+                                value={form.description}
+                                onChange={handleChange}
+                                placeholder="Ej. Pago de servicio, préstamo…"
+                                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400"
+                            />
+                        </div>
+
+                        {/* Botón */}
+                        <button
+                            onClick={handleSubmit}
+                            disabled={!canSubmit}
+                            className={`w-full font-bold text-base py-4 rounded-xl transition-all ${
+                                canSubmit
+                                    ? "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20 cursor-pointer"
+                                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                            }`}
+                        >
+                            {loadingTransfer ? "Procesando…" : "Continuar con la transferencia →"}
+                        </button>
+                    </div>
                 </div>
 
-                {/* Descripción */}
-                <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                        Descripción <span className="text-gray-300 font-normal">(opcional)</span>
-                    </label>
-                    <input
-                        type="text"
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                        placeholder="Ej. Pago de servicio, préstamo…"
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400"
-                    />
+                {/* Mini cards informativas */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+                        <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-xl mb-3">🛡️</div>
+                        <p className="text-lg font-extrabold text-slate-900 mb-1 tracking-tight">Transferencia segura</p>
+                        <p className="text-sm text-slate-600 leading-relaxed">Tus movimientos están cifrados de extremo a extremo.</p>
+                    </div>
+                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+                        <div className="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center text-xl mb-3">⚡</div>
+                        <p className="text-lg font-extrabold text-slate-900 mb-1 tracking-tight">Tiempo real</p>
+                        <p className="text-sm text-slate-600 leading-relaxed">El saldo se actualiza al instante en ambas cuentas.</p>
+                    </div>
                 </div>
 
-                <button
-                    onClick={handleSubmit}
-                    disabled={loadingTransfer || !form.fromAccount || !form.toAccount || !form.amount}
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm py-3 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                    {loadingTransfer ? "Procesando…" : "Realizar transferencia →"}
-                </button>
+                <div className="text-center">
+                    <p className="inline-block text-sm text-amber-900 bg-amber-100 px-4 py-2 rounded-lg font-semibold border border-amber-200 shadow-sm">
+                        Las transferencias son procesadas en tiempo real. Verifica bien la cuenta destino.
+                    </p>
+                </div>
             </div>
-
-            <p className="text-center text-[11px] text-gray-300">
-                Las transferencias son procesadas en tiempo real. Verifica bien la cuenta destino.
-            </p>
-        </div>
+        </>
     );
 };

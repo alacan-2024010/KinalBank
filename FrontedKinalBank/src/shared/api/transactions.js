@@ -1,13 +1,7 @@
-import { axiosTransaction } from "./api";
+import { axiosTransaction } from "./api.js";
 
-export const getTransactions = (page = 1, limit = 15) =>
-    axiosTransaction.get(`/transactions/listar?page=${page}&limit=${limit}`);
-
-export const createTransaction = (data) =>
+export const makeTransfer = (data) =>
     axiosTransaction.post("/transactions/create", data);
 
-export const updateTransaction = (id, data) =>
-    axiosTransaction.put(`/transactions/${id}`, data);
-
-export const deleteTransaction = (id) =>
-    axiosTransaction.delete(`/transactions/${id}`);
+export const getTransactionById = (id) =>
+    axiosTransaction.get(`/transactions/${id}`);
