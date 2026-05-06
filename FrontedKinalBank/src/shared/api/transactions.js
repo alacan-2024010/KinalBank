@@ -1,7 +1,7 @@
-import { axiosTransaction } from "./api.js";
+import { coreApi } from "./api.js";
 
 export const makeTransfer = (data) =>
-    axiosTransaction.post("/transactions/create", data);
+    coreApi.post("/transactions/create", data);
 
 export const getTransactionById = (id) =>
-    axiosTransaction.get(`/transactions/${id}`);
+    coreApi.get(`/transactions/${id}`);
