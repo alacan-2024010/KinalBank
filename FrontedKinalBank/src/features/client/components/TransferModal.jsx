@@ -26,7 +26,7 @@ export const TransferModal = ({ open, onConfirm, onCancel, data, accounts, loadi
 
                     <div className="flex items-center gap-3 relative">
                         <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-lg flex-shrink-0">
-                            ↗️.
+                            ↗️
                         </div>
                         <div>
                             <p className="text-white font-bold text-sm">Confirmar transferencia</p>
