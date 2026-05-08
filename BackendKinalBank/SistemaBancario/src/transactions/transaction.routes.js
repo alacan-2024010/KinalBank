@@ -1,8 +1,15 @@
 import { Router } from "express";
-import { createTransaction , getTransactions, getTransactionById, updateTransaction, deleteTransaction} from "./transaction.controller.js";
-import { validateJWT } from "../middlewares/validate-jwt.js";
+import {
+    createTransaction,
+    getTransactions,
+    getTransactionById,
+    updateTransaction,
+    deleteTransaction,
+    getMyTransactions        // ← NUEVO
+} from "./transaction.controller.js";
+import { validateJWT }    from "../middlewares/validate-jwt.js";
 import { validateClient } from "../middlewares/validate-client.js";
-import { validateAdmin } from "../middlewares/validate-admin.js";
+import { validateAdmin }  from "../middlewares/validate-admin.js";
 
 const router = new Router();
 
@@ -13,7 +20,14 @@ router.post(
     createTransaction
 );
 
-//las transacciones solo las puede ver el admin
+// ⚠️ IMPORTANTE: esta ruta va ANTES de /:id
+router.get(
+    '/my-transactions',
+    validateJWT,
+    validateClient,
+    getMyTransactions
+);
+
 router.get(
     '/listar',
     validateJWT,
@@ -22,23 +36,23 @@ router.get(
 );
 
 router.get(
-    '/:id', 
-    validateJWT, 
-    validateClient, 
+    '/:id',
+    validateJWT,
+    validateClient,
     getTransactionById
 );
 
 router.put(
-    '/:id', 
-    validateJWT, 
-    validateClient, 
+    '/:id',
+    validateJWT,
+    validateClient,
     updateTransaction
 );
 
 router.delete(
-    '/:id', 
-    validateJWT, 
-    validateClient, 
+    '/:id',
+    validateJWT,
+    validateClient,
     deleteTransaction
 );
 

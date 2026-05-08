@@ -6,9 +6,6 @@ export const createTransaction = async (req, res) => {
     try {
         const { type, amount, fromAccount, toAccount, description } = req.body;
 
-        // ─────────────────────────────
-        // VALIDACIÓN BÁSICA
-        // ─────────────────────────────
         if (!type || !amount || !fromAccount || !description) {
             return res.status(400).json({
                 success: false,
@@ -25,9 +22,6 @@ export const createTransaction = async (req, res) => {
             });
         }
 
-        // ─────────────────────────────
-        // CUENTAS (por accountNumber)
-        // ─────────────────────────────
         const sourceAccount = await Account.findOne({ accountNumber: fromAccount });
 
         if (!sourceAccount) {
@@ -48,9 +42,6 @@ export const createTransaction = async (req, res) => {
             });
         }
 
-        // ─────────────────────────────
-        // LÍMITE POR OPERACIÓN: 2,000
-        // ─────────────────────────────
         if (type === "TRANSFERENCIA" && amountNumber > 2000) {
             return res.status(400).json({
                 success: false,
@@ -58,9 +49,6 @@ export const createTransaction = async (req, res) => {
             });
         }
 
-        // ─────────────────────────────
-        // LÍMITE DIARIO: 10,000
-        // ─────────────────────────────
         if (type === "TRANSFERENCIA") {
             const startOfDay = new Date();
             startOfDay.setHours(0, 0, 0, 0);
@@ -87,9 +75,6 @@ export const createTransaction = async (req, res) => {
             }
         }
 
-        // ─────────────────────────────
-        // SALDO
-        // ─────────────────────────────
         if (sourceAccount.balance < amountNumber) {
             return res.status(400).json({
                 success: false,
@@ -97,16 +82,10 @@ export const createTransaction = async (req, res) => {
             });
         }
 
-        // ─────────────────────────────
-        // CONVERSIÓN SEGURA
-        // ─────────────────────────────
         let finalAmount = amountNumber;
         let exchangeRate = 1;
 
-        if (
-            destinationAccount &&
-            sourceAccount.currency !== destinationAccount.currency
-        ) {
+        if (destinationAccount && sourceAccount.currency !== destinationAccount.currency) {
             try {
                 const conversion = await convertirMoneda(
                     sourceAccount.currency,
@@ -126,9 +105,6 @@ export const createTransaction = async (req, res) => {
             }
         }
 
-        // ─────────────────────────────
-        // ACTUALIZAR SALDOS
-        // ─────────────────────────────
         sourceAccount.balance -= amountNumber;
 
         if (destinationAccount) {
@@ -138,9 +114,6 @@ export const createTransaction = async (req, res) => {
 
         await sourceAccount.save();
 
-        // ─────────────────────────────
-        // CREAR TRANSACCIÓN
-        // ─────────────────────────────
         const transaction = new Transaction({
             type,
             amountSent: amountNumber,
@@ -164,7 +137,6 @@ export const createTransaction = async (req, res) => {
 
     } catch (error) {
         console.error("💥 CREATE TRANSACTION ERROR:", error);
-
         return res.status(500).json({
             success: false,
             message: "Error interno al realizar la transacción",
@@ -265,6 +237,56 @@ export const deleteTransaction = async (req, res) => {
         res.status(500).json({
             success: false,
             message: error.message
+        });
+    }
+};
+
+export const getMyTransactions = async (req, res) => {
+    try {
+        console.log('👤 req.user:', req.user);
+        const userId = req.user.id;
+
+        const userAccounts = await Account.find({ ownerId: userId }).select('_id');
+        const accountIds = userAccounts.map(a => a._id);
+
+        const filter = {
+            $or: [
+                { fromAccount: { $in: accountIds } },
+                { toAccount:   { $in: accountIds } }
+            ]
+        };
+
+        const page  = Math.max(1, parseInt(req.query.page)  || 1);
+        const limit = Math.max(1, parseInt(req.query.limit) || 10);
+        const skip  = (page - 1) * limit;
+
+        const [transactions, totalRecords] = await Promise.all([
+            Transaction.find(filter)
+                .populate('fromAccount', 'accountNumber currency')
+                .populate('toAccount',   'accountNumber currency')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
+            Transaction.countDocuments(filter)
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            data: transactions,
+            pagination: {
+                currentPage:  page,
+                totalPages:   Math.ceil(totalRecords / limit) || 1,
+                totalRecords,
+                limit
+            }
+        });
+
+    } catch (error) {
+        console.error('💥 GET MY TRANSACTIONS ERROR:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al obtener transacciones',
+            error: error.message
         });
     }
 };
