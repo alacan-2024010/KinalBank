@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useClientStore } from "../store/clientStore.js";
 import { useAuthStore } from "../../auth/store/authStore.js";
-
+ 
 const StatCard = ({ label, value, sub, icon, color = "indigo" }) => {
     const colors = {
         indigo: "bg-indigo-50 text-indigo-600",
@@ -23,7 +23,7 @@ const StatCard = ({ label, value, sub, icon, color = "indigo" }) => {
         </div>
     );
 };
-
+ 
 const AccountCard = ({ account, onClick }) => {
     const isActive = account.status === "ACTIVA";
     return (
@@ -54,9 +54,22 @@ const AccountCard = ({ account, onClick }) => {
         </div>
     );
 };
-
+ 
 const RecentTransactionRow = ({ tx }) => {
-    const isCredit = tx.type === "DEPOSITO" || tx.type === "CREDITO";
+    const isCredit =
+        tx.type === "DEPOSITO" ||
+        tx.type === "CREDITO";
+ 
+    const symbol = tx.currency === "GTQ" ? "Q" : "$";
+ 
+    const amount =
+        tx.amountReceived ??
+        tx.amountSent ??
+        tx.amount ??
+        0;
+ 
+    const safeAmount = Number(amount) || 0;
+ 
     return (
         <div className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0 ${
@@ -64,45 +77,51 @@ const RecentTransactionRow = ({ tx }) => {
             }`}>
                 {isCredit ? "↓" : "↑"}
             </div>
+ 
             <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">
                     {tx.description ?? tx.type}
                 </p>
                 <p className="text-[11px] text-gray-400">
                     {new Date(tx.createdAt).toLocaleDateString("es-GT", {
-                        day: "2-digit", month: "short", year: "numeric"
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
                     })}
                 </p>
             </div>
-            <p className={`text-sm font-semibold flex-shrink-0 ${isCredit ? "text-green-600" : "text-red-500"}`}>
+ 
+            <p className={`text-sm font-semibold flex-shrink-0 ${
+                isCredit ? "text-green-600" : "text-red-500"
+            }`}>
                 {isCredit ? "+" : "-"}
-                {tx.currency === "GTQ" ? "Q" : "$"}
-                {Number(tx.amount).toLocaleString("es-GT", { minimumFractionDigits: 2 })}
+                {symbol}
+                {safeAmount.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
             </p>
         </div>
     );
 };
-
+ 
 export const ClientHomePage = () => {
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const { accounts, transactions, loading, fetchMyAccounts, fetchMyTransactions } = useClientStore();
-
+ 
     useEffect(() => {
         fetchMyAccounts();
         fetchMyTransactions(1);
     }, []);
-
+ 
     const totalGTQ = accounts
         .filter(a => a.currency === "GTQ" && a.status === "ACTIVA")
         .reduce((s, a) => s + Number(a.balance), 0);
-
+ 
     const totalUSD = accounts
         .filter(a => a.currency === "USD" && a.status === "ACTIVA")
         .reduce((s, a) => s + Number(a.balance), 0);
-
+ 
     const recentTx = transactions.slice(0, 5);
-
+ 
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             {/* Encabezado */}
@@ -114,7 +133,7 @@ export const ClientHomePage = () => {
                     Aquí tienes un resumen de tu situación financiera.
                 </p>
             </div>
-
+ 
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
@@ -143,7 +162,7 @@ export const ClientHomePage = () => {
                     color="amber"
                 />
             </div>
-
+ 
             {/* Mis cuentas */}
             <div>
                 <div className="flex items-center justify-between mb-4">
@@ -155,7 +174,7 @@ export const ClientHomePage = () => {
                         Ver todas →
                     </button>
                 </div>
-
+ 
                 {loading ? (
                     <div className="text-center py-10 text-gray-400 text-sm">Cargando cuentas…</div>
                 ) : accounts.length === 0 ? (
@@ -175,7 +194,7 @@ export const ClientHomePage = () => {
                     </div>
                 )}
             </div>
-
+ 
             {/* Movimientos recientes */}
             <div>
                 <div className="flex items-center justify-between mb-4">
@@ -187,7 +206,7 @@ export const ClientHomePage = () => {
                         Ver todos →
                     </button>
                 </div>
-
+ 
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-2">
                     {loading ? (
                         <p className="text-center text-gray-400 text-sm py-6">Cargando movimientos…</p>
