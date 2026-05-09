@@ -53,6 +53,19 @@ export const AdminGeneralLayout = () => {
                                 <span className="text-base leading-none">🏦</span>
                                 Cuentas
                             </NavLink>
+                            <NavLink
+                            to="/dashboard/deposits"
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+                                    isActive
+                                        ? "bg-white/10 text-white border-l-4 border-indigo-500 pl-2"
+                                        : "text-white/60 hover:bg-white/5 hover:text-white"
+                                }`
+                            }
+                        >
+                            <span className="text-base leading-none">💰</span>
+                            Depósitos
+                        </NavLink>
                         </nav>
                     </div>
                 </aside>

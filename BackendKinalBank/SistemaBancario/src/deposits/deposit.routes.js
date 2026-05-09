@@ -8,7 +8,7 @@ const router = Router();
 router.post(
     '/create',
     validateJWT, 
-    validateClient,
+    validateAdmin,
     createDeposit
 );
 
@@ -23,14 +23,14 @@ router.get(
 router.put(
     '/revert/:id',
     validateJWT, 
-    validateClient,
+    validateAdmin,
     revertDeposit
 );
 
 router.get(
     '/:id', 
     validateJWT, 
-    validateClient, 
+    validateAdmin, 
     getDepositById
 );
 

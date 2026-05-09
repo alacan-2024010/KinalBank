@@ -18,6 +18,7 @@ export const useAccountsStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await getAccounts(page, limit);
+      console.log(data);
       set({ accounts: data.data, pagination: data.pagination });
     } catch (err) {
       set({ error: err.response?.data?.message ?? "Error al cargar cuentas" });
