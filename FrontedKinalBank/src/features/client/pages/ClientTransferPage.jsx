@@ -1,30 +1,31 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useClientStore } from "../store/clientStore.js";
 import { TransferModal } from "../components/TransferModal.jsx";
 
 const CURRENCY_SYMBOLS = {
-    GTQ: "Q",
-    USD: "$",
-    EUR: "€",
-    GBP: "£",
-    MXN: "MX$",
-    CAD: "C$",
-    JPY: "¥",
-    CHF: "Fr",
-    BRL: "R$",
-    COP: "COL$",
+    GTQ: "Q", USD: "$", EUR: "€", GBP: "£", MXN: "MX$",
+    CAD: "C$", JPY: "¥", CHF: "Fr", BRL: "R$", COP: "COL$",
 };
 
 const getCurrencySymbol = (currency) =>
     CURRENCY_SYMBOLS[currency] ?? currency ?? "Q";
 
 export const ClientTransferPage = () => {
+    const location = useLocation();
+    const prefill  = location.state ?? {};   // { toAccount, alias } si viene de Favoritos
+
     const {
         accounts, loadingTransfer, transferError, transferSuccess,
         fetchMyAccounts, transfer, clearTransferState,
     } = useClientStore();
 
-    const [form, setForm] = useState({ fromAccount: "", toAccount: "", amount: "", description: "" });
+    const [form, setForm] = useState({
+        fromAccount: "",
+        toAccount:   prefill.toAccount ?? "",
+        amount:      "",
+        description: prefill.alias ? `Transferencia a ${prefill.alias}` : "",
+    });
     const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
@@ -32,8 +33,8 @@ export const ClientTransferPage = () => {
         return () => clearTransferState();
     }, []);
 
-    const activeAccounts      = accounts.filter(a => a.status === "ACTIVA");
-    const handleChange        = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
+    const activeAccounts    = accounts.filter(a => a.status === "ACTIVA");
+    const handleChange      = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
     const handleSubmit = () => {
         if (!form.fromAccount || !form.toAccount || !form.amount) return;
@@ -51,17 +52,19 @@ export const ClientTransferPage = () => {
             amount:      Number(form.amount),
             description: form.description || "Transferencia entre cuentas",
         });
-        if (result.success) setForm({ fromAccount: "", toAccount: "", amount: "", description: "" });
+        if (result.success) {
+            setForm({ fromAccount: "", toAccount: "", amount: "", description: "" });
+        }
     };
 
     const selectedAccount     = accounts.find(a => a._id === form.fromAccount);
     const toAccount           = accounts.find(a => a.accountNumber === form.toAccount);
     const symbol              = getCurrencySymbol(selectedAccount?.currency);
     const destinationAccounts = activeAccounts.filter(a => a._id !== form.fromAccount);
-    const canSubmit           = !!(form.fromAccount && form.toAccount.length === 10 && form.amount && !loadingTransfer);
+    const toAccountComplete   = form.toAccount.length === 10;
+    const canSubmit           = !!(form.fromAccount && toAccountComplete && form.amount && !loadingTransfer);
     const amountPct           = Math.min((Number(form.amount) / 2000) * 100, 100);
     const barColor            = amountPct >= 90 ? "bg-red-500" : amountPct >= 60 ? "bg-amber-400" : "bg-emerald-500";
-    const toAccountComplete   = form.toAccount.length === 10;
     const willConvert         = selectedAccount && toAccount && selectedAccount.currency !== toAccount.currency;
 
     return (
@@ -84,6 +87,22 @@ export const ClientTransferPage = () => {
                         Mueve dinero entre tus cuentas activas de forma segura e inmediata.
                     </p>
                 </div>
+
+                {/* Banner de favorito pre-cargado */}
+                {prefill.toAccount && (
+                    <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-3.5 flex items-center gap-3">
+                        <span className="text-xl">⭐</span>
+                        <div>
+                            <p className="text-sm font-semibold text-indigo-800">
+                                Transferencia a favorito
+                            </p>
+                            <p className="text-xs text-indigo-500 font-mono mt-0.5">
+                                {prefill.alias && <span className="mr-2 not-italic">{prefill.alias} ·</span>}
+                                {prefill.toAccount}
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Alertas */}
                 {transferSuccess && (
@@ -156,12 +175,9 @@ export const ClientTransferPage = () => {
                                         ? "border-amber-300 ring-2 ring-amber-500/10"
                                         : "border-slate-200 focus-within:ring-2 focus-within:ring-indigo-500/30 focus-within:border-indigo-400"
                                 }`}>
-                                    {/* Ícono izquierdo */}
                                     <div className="flex-shrink-0 w-11 h-11 flex items-center justify-center border-r text-lg bg-slate-50 border-slate-200">
-                                        🏦
+                                        {prefill.toAccount ? "⭐" : "🏦"}
                                     </div>
-
-                                    {/* Input */}
                                     <input
                                         type="text"
                                         name="toAccount"
@@ -174,8 +190,6 @@ export const ClientTransferPage = () => {
                                         maxLength={10}
                                         className="flex-1 px-3 py-3 text-sm text-slate-800 bg-white focus:outline-none font-mono tracking-wider placeholder-slate-300"
                                     />
-
-                                    {/* Contador */}
                                     <div className={`flex-shrink-0 px-3 text-xs font-bold tabular-nums ${
                                         toAccountComplete ? "text-slate-500" : "text-slate-300"
                                     }`}>
@@ -183,11 +197,12 @@ export const ClientTransferPage = () => {
                                     </div>
                                 </div>
 
-                                {/* Hint */}
                                 <p className="text-xs mt-1.5 text-slate-400">
                                     {form.toAccount.length > 0 && !toAccountComplete
                                         ? `Faltan ${10 - form.toAccount.length} dígitos`
-                                        : "Ingresa los 10 dígitos de la cuenta"}
+                                        : prefill.toAccount
+                                            ? `Cuenta de ${prefill.alias ?? "favorito"}`
+                                            : "Ingresa los 10 dígitos de la cuenta"}
                                 </p>
                             </div>
                         </div>
@@ -230,8 +245,6 @@ export const ClientTransferPage = () => {
                                     className="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-3xl font-extrabold text-slate-900 placeholder-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 h-14"
                                 />
                             </div>
-
-                            {/* Barra de progreso */}
                             {Number(form.amount) > 0 && (
                                 <div className="mt-3">
                                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">

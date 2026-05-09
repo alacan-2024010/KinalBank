@@ -10,7 +10,9 @@ const BASE_PATH = '/kinalBank/v1';
 import transactionRoutes from '../src/transactions/transaction.routes.js';
 import accountRoutes     from '../src/accounts/account.routes.js';
 import depositRoutes     from '../src/deposits/deposit.routes.js';
-import clientRoutes      from '../src/client/client.routes.js';   // ← NUEVO
+import clientRoutes      from '../src/client/client.routes.js';
+import favoriteRoutes    from '../src/favorits/favorite.routes.js';
+import productRoutes     from '../src/products/product.routes.js';
 
 export const initApp = () => {
   const app = express();
@@ -23,7 +25,9 @@ export const initApp = () => {
   app.use(`${BASE_PATH}/transactions`, transactionRoutes);
   app.use(`${BASE_PATH}/accounts`,    accountRoutes);
   app.use(`${BASE_PATH}/deposits`,    depositRoutes);
-  app.use(`${BASE_PATH}/client`,      clientRoutes);   // ← NUEVO
+  app.use(`${BASE_PATH}/client`,      clientRoutes);
+  app.use(`${BASE_PATH}/favorites`,   favoriteRoutes);
+  app.use(`${BASE_PATH}/products`,    productRoutes);
 
   app.get(`${BASE_PATH}/health`, (req, res) => {
     res.status(200).json({

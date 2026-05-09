@@ -10,11 +10,19 @@ export const ClientLayout = () => {
         navigate("/", { replace: true });
     };
 
-    const navItems = [
+    const principalItems = [
         { to: "/dashboard/client", label: "Inicio", icon: "🏠", end: true },
         { to: "/dashboard/client/accounts", label: "Mis Cuentas", icon: "💳" },
+    ];
+
+    const operacionesItems = [
         { to: "/dashboard/client/transactions", label: "Movimientos", icon: "📋" },
         { to: "/dashboard/client/transfer", label: "Transferir", icon: "↗️" },
+        { to: "/dashboard/client/favorites", label: "Favoritos", icon: "⭐" },
+    ];
+
+    const explorarItems = [
+        { to: "/dashboard/client/products", label: "Productos y Servicios", icon: "📦" },
     ];
 
     return (
@@ -46,11 +54,11 @@ export const ClientLayout = () => {
                         </p>
 
                         <nav className="space-y-1">
+                            {/* Principal */}
                             <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3 pt-2 pb-1">
                                 Principal
                             </p>
-
-                            {navItems.slice(0, 2).map((item) => (
+                            {principalItems.map((item) => (
                                 <NavLink
                                     key={item.to}
                                     to={item.to}
@@ -68,11 +76,32 @@ export const ClientLayout = () => {
                                 </NavLink>
                             ))}
 
+                            {/* Operaciones */}
                             <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3 pt-4 pb-1">
                                 Operaciones
                             </p>
+                            {operacionesItems.map((item) => (
+                                <NavLink
+                                    key={item.to}
+                                    to={item.to}
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+                                            isActive
+                                                ? "bg-white/10 text-white border-l-4 border-indigo-500 pl-2"
+                                                : "text-white/60 hover:bg-white/5 hover:text-white"
+                                        }`
+                                    }
+                                >
+                                    <span className="text-base leading-none">{item.icon}</span>
+                                    {item.label}
+                                </NavLink>
+                            ))}
 
-                            {navItems.slice(2).map((item) => (
+                            {/* Explorar */}
+                            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3 pt-4 pb-1">
+                                Explorar
+                            </p>
+                            {explorarItems.map((item) => (
                                 <NavLink
                                     key={item.to}
                                     to={item.to}

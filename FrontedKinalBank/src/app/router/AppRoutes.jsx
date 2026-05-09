@@ -8,6 +8,8 @@ import { ClientHomePage } from "../../features/client/pages/ClientHomePage.jsx";
 import { ClientAccountsPage } from "../../features/client/pages/ClientAccountsPage.jsx";
 import { ClientTransactionsPage } from "../../features/client/pages/ClientTransactionsPage.jsx";
 import { ClientTransferPage } from "../../features/client/pages/ClientTransferPage.jsx";
+import { ClientFavoritesPage } from "../../features/client/pages/ClientFavoritesPage.jsx";
+import { ClientProductsPage } from "../../features/client/pages/ClientProductsPage.jsx";
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { RoleRedirect } from "./RoleRedirect.jsx";
 
@@ -44,6 +46,8 @@ export const AppRoutes = () => {
                 <Route path="accounts"     element={<ClientAccountsPage />} />
                 <Route path="transactions" element={<ClientTransactionsPage />} />
                 <Route path="transfer"     element={<ClientTransferPage />} />
+                <Route path="favorites"    element={<ClientFavoritesPage />} />
+                <Route path="products"     element={<ClientProductsPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
