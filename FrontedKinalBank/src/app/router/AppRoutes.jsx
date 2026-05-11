@@ -33,6 +33,7 @@ export const AppRoutes = () => {
                 <Route path="users"    element={<UsersPage />} />
                 <Route path="accounts" element={<AccountsPage />} />
                 <Route path="deposits" element={<DepositPage />} />
+                <Route path="products" element={<ProductsPage />} />
             </Route>
 
             {/* ── CLIENT ── */}

@@ -156,6 +156,45 @@ export const AdminGeneralLayout = () => {
                                         )}
                                     </NavLink>
 
+                                    <NavLink
+                                        to="/dashboard/products"
+                                        className={({ isActive }) =>
+                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                                isActive
+                                                    ? "bg-gradient-to-r from-indigo-500/20 to-cyan-500/10 border border-indigo-400/20 shadow-lg shadow-indigo-500/10"
+                                                    : "hover:bg-white/5 border border-transparent"
+                                            }`
+                                        }
+                                    >
+                                        {({ isActive }) => (
+                                            <>
+                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                    isActive
+                                                        ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
+                                                        : "bg-white/5 text-slate-300 group-hover:bg-white/10"
+                                                }`}>
+                                                    📦
+                                                </div>
+
+                                                <div className="flex flex-col">
+                                                    <span className={`text-sm font-semibold ${
+                                                        isActive ? "text-white" : "text-slate-300"
+                                                    }`}>
+                                                        Productos
+                                                    </span>
+
+                                                    <span className="text-xs text-slate-500">
+                                                        Servicios y productos
+                                                    </span>
+                                                </div>
+
+                                                {isActive && (
+                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-400" />
+                                                )}
+                                            </>
+                                        )}
+                                    </NavLink>
+
                                 </div>
                             </div>
 
