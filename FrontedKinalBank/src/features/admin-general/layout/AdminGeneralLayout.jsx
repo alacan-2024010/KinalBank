@@ -28,7 +28,6 @@ export const AdminGeneralLayout = () => {
                                 </p>
 
                                 <div className="space-y-2">
-
                                     <NavLink
                                         to="/dashboard/users"
                                         className={({ isActive }) =>
@@ -112,6 +111,41 @@ export const AdminGeneralLayout = () => {
 
                                                 {isActive && (
                                                     <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-emerald-400 to-teal-400" />
+                                                )}
+                                            </>
+                                        )}
+                                    </NavLink>
+
+                                    {/* NUEVO: Transacciones */}
+                                    <NavLink
+                                        to="/dashboard/transactions"
+                                        className={({ isActive }) =>
+                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                                isActive
+                                                    ? "bg-gradient-to-r from-cyan-500/20 to-indigo-500/10 border border-cyan-400/20 shadow-lg shadow-cyan-500/10"
+                                                    : "hover:bg-white/5 border border-transparent"
+                                            }`
+                                        }
+                                    >
+                                        {({ isActive }) => (
+                                            <>
+                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                    isActive
+                                                        ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/30"
+                                                        : "bg-white/5 text-slate-300 group-hover:bg-white/10"
+                                                }`}>
+                                                    📊
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className={`text-sm font-semibold ${isActive ? "text-white" : "text-slate-300"}`}>
+                                                        Transacciones
+                                                    </span>
+                                                    <span className="text-xs text-slate-500">
+                                                        Actividad de cuentas
+                                                    </span>
+                                                </div>
+                                                {isActive && (
+                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-cyan-400 to-indigo-400" />
                                                 )}
                                             </>
                                         )}

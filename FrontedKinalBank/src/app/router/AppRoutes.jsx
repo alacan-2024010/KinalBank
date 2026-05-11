@@ -14,6 +14,7 @@ import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { RoleRedirect } from "./RoleRedirect.jsx";
 import { DepositPage } from "../../features/admin-general/pages/DepositPage.jsx";
 import { ProductsPage } from "../../features/admin-general/pages/ProductsPage.jsx";
+import { AdminTransactionsPage } from "../../features/admin-general/pages/AdminTransactionsPage.jsx";
 
 export const AppRoutes = () => {
     return (
@@ -35,6 +36,7 @@ export const AppRoutes = () => {
                 <Route path="accounts" element={<AccountsPage />} />
                 <Route path="deposits" element={<DepositPage />} />
                 <Route path="products" element={<ProductsPage />} />
+                <Route path="transactions" element={<AdminTransactionsPage />} />
             </Route>
 
             {/* ── CLIENT ── */}
