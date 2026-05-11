@@ -218,6 +218,60 @@ export const updateTransaction = async (req, res) => {
     }
 };
 
+// Cuentas con más movimientos (admin)
+export const getAccountsByActivity = async (req, res) => {
+    try {
+        const { order = 'desc' } = req.query;
+
+        const result = await Transaction.aggregate([
+            {
+                $group: {
+                    _id: '$fromAccount',
+                    totalMovimientos: { $sum: 1 }
+                }
+            },
+            { $sort: { totalMovimientos: order === 'asc' ? 1 : -1 } },
+            { $limit: 20 },
+            {
+                $lookup: {
+                    from: 'accounts',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'account'
+                }
+            },
+            { $unwind: '$account' }
+        ]);
+
+        res.json({ success: true, data: result });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Últimos 5 movimientos de una cuenta específica (admin)
+export const getAccountTransactions = async (req, res) => {
+    try {
+        const { accountId } = req.params;
+        const { limit = 5 } = req.query;
+
+        const transactions = await Transaction.find({
+            $or: [
+                { fromAccount: accountId },
+                { toAccount: accountId }
+            ]
+        })
+        .populate('fromAccount', 'accountNumber currency')
+        .populate('toAccount', 'accountNumber currency')
+        .sort({ createdAt: -1 })
+        .limit(Number(limit));
+
+        res.json({ success: true, data: transactions });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 export const deleteTransaction = async (req, res) => {
     try {
         const { id } = req.params;
@@ -290,3 +344,4 @@ export const getMyTransactions = async (req, res) => {
         });
     }
 };
+

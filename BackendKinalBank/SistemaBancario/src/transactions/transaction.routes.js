@@ -5,7 +5,9 @@ import {
     getTransactionById,
     updateTransaction,
     deleteTransaction,
-    getMyTransactions        // ← NUEVO
+    getMyTransactions ,
+    getAccountsByActivity,
+    getAccountTransactions
 } from "./transaction.controller.js";
 import { validateJWT }    from "../middlewares/validate-jwt.js";
 import { validateClient } from "../middlewares/validate-client.js";
@@ -20,12 +22,27 @@ router.post(
     createTransaction
 );
 
-// ⚠️ IMPORTANTE: esta ruta va ANTES de /:id
 router.get(
     '/my-transactions',
     validateJWT,
     validateClient,
     getMyTransactions
+);
+
+// Cuentas con más movimientos
+router.get(
+    '/by-activity',
+    validateJWT,
+    validateAdmin,
+    getAccountsByActivity
+);
+
+// Últimos movimientos de una cuenta
+router.get(
+    '/account/:accountId',
+    validateJWT,
+    validateAdmin,
+    getAccountTransactions
 );
 
 router.get(
