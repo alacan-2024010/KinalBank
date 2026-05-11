@@ -7,6 +7,8 @@ import {
   approveUser,
   denyUser,
   getUsersByIds,
+  getMyProfile, 
+  updateMyProfile
 } from './user.controller.js';
 
 import { validateJWT }   from '../../middlewares/validate-JWT.js';
@@ -14,19 +16,30 @@ import { validateAdmin } from '../../middlewares/validate-role.js';
 
 const router = Router();
 
-// Ver pendientes (admin)
-router.get('/pending',  validateJWT, validateAdmin, getPendingUsers);
+// Test directo
+router.put('/me-direct', (req, res) => {
+    res.json({ ok: true });
+});
 
-// Ver aprobados — para selector de propietario al crear cuenta (admin)
+router.get('/me', validateJWT, getMyProfile);
+
+router.put('/me', (req, res) => {
+    res.json({ ok: true, msg: 'sin middleware' });
+});
+
+// Ver pendientes (admin)
+router.get('/pending', validateJWT, validateAdmin, getPendingUsers);
+
+// Ver aprobados
 router.get('/approved', validateJWT, validateAdmin, getApprovedUsers);
 
 // Aprobar
-router.put('/approve',  validateJWT, validateAdmin, approveUser);
+router.put('/approve', validateJWT, validateAdmin, approveUser);
 
-// Denegar (elimina la solicitud)
+// Denegar
 router.delete('/deny/:id', validateJWT, validateAdmin, denyUser);
 
-// Al final de las rutas, antes del export
+// Por IDs
 router.post('/by-ids', validateJWT, validateAdmin, getUsersByIds);
 
 export default router;

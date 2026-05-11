@@ -30,17 +30,24 @@ const middlewares = (app) => {
 };
 
 const routes = (app) => {
+  // Agrega esto ANTES de registrar las rutas
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+  });
+
   app.use(`${BASE_PATH}/auth`, authRoutes);
   app.use(`${BASE_PATH}/users`, userRoutes);
 
   app.get(`${BASE_PATH}/health`, (req, res) => {
-    res.status(200).json({
-      status: 'Healthy',
-      timestamp: new Date().toISOString(),
-      service: 'KinalSports Authentication Service',
-    });
+    res.status(200).json({ status: 'Healthy' });
   });
-  // 404 handler (standardized)
+
+  // Log temporal
+  app.get(`${BASE_PATH}/test-me`, (req, res) => {
+    res.json({ message: 'rutas funcionando' });
+  });
+
   app.use(notFound);
 };
 

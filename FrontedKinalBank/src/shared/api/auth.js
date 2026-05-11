@@ -11,3 +11,6 @@ export const forgotPasswordRequest = (data) =>
 
 export const profileRequest = () =>
   axiosAuth.get('/auth/profile')
+
+export const updateProfileRequest = (data) =>
+    api.put("/users/me", data);

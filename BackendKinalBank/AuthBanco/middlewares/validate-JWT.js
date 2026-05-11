@@ -4,15 +4,15 @@ import { verifyJWT } from '../helpers/generate.jwt.js';
 import { User } from '../src/users/user.model.js';
 import { Role } from '../src/auth/role.model.js';
 
-
-
 export const validateJWT = async (req, res, next) => {
+
   try {
+
     let token =
-      req.header('x-token') ||
-      req.header('authorization') ||
-      req.body.token ||
-      req.query.token;
+  req.header('x-token') ||
+  req.header('authorization') ||
+  req.body?.token ||
+  req.query.token;
 
     if (!token) {
       return res.status(401).json({
@@ -42,7 +42,7 @@ export const validateJWT = async (req, res, next) => {
       });
     }
 
-    // Verificar activo
+    // Verificar si está activo
     if (!user.Status) {
       return res.status(423).json({
         success: false,
@@ -50,21 +50,34 @@ export const validateJWT = async (req, res, next) => {
       });
     }
 
-    // Guardar usuario en request
+    /**
+     * IMPORTANTE:
+     * Sequelize devuelve atributos con mayúscula:
+     * user.Id
+     * user.Name
+     * user.Email
+     */
+
+    // Guardar usuario completo
     req.user = user;
+
+    // Guardar datos normalizados
     req.userId = user.Id;
-    req.role = user.role.Name;
+    req.role = user.role?.Name;
 
     next();
+
   } catch (error) {
+
     console.error('JWT Error:', error);
 
     return res.status(401).json({
       success: false,
       message: 'Token inválido o expirado',
-      error: process.env.NODE_ENV === 'development'
-        ? error.message
-        : undefined,
+      error:
+        process.env.NODE_ENV === 'development'
+          ? error.message
+          : undefined,
     });
   }
 };

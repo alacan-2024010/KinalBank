@@ -127,3 +127,61 @@ export const getUsersByIds = async (req, res) => {
     res.status(500).json({ success: false, message: 'Error al obtener usuarios por IDs' });
   }
 };
+
+// Editar perfil propio (cliente)
+export const updateMyProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // viene del JWT
+
+    const { Name, Address, Job, MonthlyIncome } = req.body;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    if (Name)          user.Name          = Name;
+    if (Address)       user.Address       = Address;
+    if (Job)           user.Job           = Job;
+    if (MonthlyIncome) user.MonthlyIncome = MonthlyIncome;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: 'Perfil actualizado correctamente',
+      user: {
+        Id:           user.Id,
+        Name:         user.Name,
+        Username:     user.Username,
+        Email:        user.Email,
+        Address:      user.Address,
+        Job:          user.Job,
+        MonthlyIncome: user.MonthlyIncome,
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error al actualizar perfil' });
+  }
+};
+
+// Obtener perfil propio (cliente)
+export const getMyProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['Password'] }
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    return res.json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error al obtener perfil' });
+  }
+};

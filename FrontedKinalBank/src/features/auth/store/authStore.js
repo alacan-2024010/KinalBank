@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { loginRequest, registerRequest, forgotPasswordRequest, profileRequest } from '../../../shared/api'
+import { loginRequest, registerRequest, forgotPasswordRequest, profileRequest, updateMyProfile as updateProfileRequest } from '../../../shared/api'
 
 // Cargar user y token desde localStorage al iniciar
 const initialUser = JSON.parse(localStorage.getItem('user')) || null
@@ -85,6 +85,24 @@ export const useAuthStore = create((set) => ({
             localStorage.removeItem('token')
             localStorage.removeItem('user') // <--- limpiar si falla
             set({ user: null, token: null })
+        }
+    },
+
+    updateProfile: async (data) => {
+        try {
+            set({ loading: true, error: null });
+            const res = await updateProfileRequest(data);
+            console.log('Respuesta del backend:', res.data); // ← agrega esto
+            const updatedUser = res.data.user;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            set({ user: updatedUser, loading: false });
+            return { success: true };
+        } catch (err) {
+            set({
+                error: err.response?.data?.message || 'Error al actualizar perfil',
+                loading: false
+            });
+            return { success: false };
         }
     },
 

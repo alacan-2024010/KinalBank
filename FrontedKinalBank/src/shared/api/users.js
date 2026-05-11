@@ -11,3 +11,6 @@ export const approveUser = (userId, role = "CLIENT") =>
 
 export const denyUser = (userId) =>
   axiosAuth.delete(`/users/deny/${userId}`);
+
+export const getMyProfile  = ()       => axiosAuth.get('/users/me');
+export const updateMyProfile = (data) => axiosAuth.put('/users/me', data);
