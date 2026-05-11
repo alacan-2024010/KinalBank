@@ -59,6 +59,9 @@ export const AccountsPage = () => {
 
     const [ownerModal, setOwnerModal] = useState(null);
 
+    // SEARCH
+    const [search, setSearch] = useState("");
+
     useEffect(() => {
         fetchAccounts();
     }, []);
@@ -105,6 +108,13 @@ export const AccountsPage = () => {
         .reduce((s, a) => s + a.balance, 0);
 
     const activas = accounts.filter(a => a.status === "ACTIVA").length;
+
+    // FILTERED ACCOUNTS
+    const filteredAccounts = accounts.filter(acc =>
+        acc.accountNumber
+            ?.toLowerCase()
+            .includes(search.toLowerCase())
+    );
 
     return (
         <>
@@ -216,12 +226,7 @@ export const AccountsPage = () => {
                         })}`}
                         sub="Balances activos en quetzales"
                         color="bg-emerald-500"
-                        icon={
-                            <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
-                                <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5"/>
-                                <path d="M10 6v8M7.5 8.5C7.5 7.1 8.6 6 10 6s2.5 1.1 2.5 2.5S11.4 11 10 11H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                            </svg>
-                        }
+                        icon={<span>💰</span>}
                     />
 
                     <StatCard
@@ -231,12 +236,7 @@ export const AccountsPage = () => {
                         })}`}
                         sub="Balances activos en dólares"
                         color="bg-indigo-500"
-                        icon={
-                            <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
-                                <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5"/>
-                                <path d="M10 5.5v9M8 8c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2 .9-2 2 .9 2 2 2 2-.9 2-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                            </svg>
-                        }
+                        icon={<span>💵</span>}
                     />
 
                     <StatCard
@@ -244,13 +244,7 @@ export const AccountsPage = () => {
                         value={activas}
                         sub={`${accounts.length} registradas en total`}
                         color="bg-cyan-500"
-                        icon={
-                            <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
-                                <rect x="2.5" y="5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-                                <path d="M2.5 8.5h15" stroke="currentColor" strokeWidth="1.5"/>
-                                <path d="M6 12.5h2M10 12.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                            </svg>
-                        }
+                        icon={<span>🏦</span>}
                     />
 
                 </div>
@@ -259,7 +253,7 @@ export const AccountsPage = () => {
                 <div className="rounded-[30px] border border-white/50 bg-white/85 backdrop-blur-xl shadow-xl shadow-slate-200/50 overflow-hidden max-w-5xl mx-auto">
 
                     {/* Top */}
-                    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 px-6 py-5 border-b border-slate-100">
 
                         <div>
                             <h2 className="text-xl font-bold text-slate-800">
@@ -271,11 +265,24 @@ export const AccountsPage = () => {
                             </p>
                         </div>
 
+                        {/* SEARCH */}
+                        <div className="relative w-full lg:w-80">
+
+                            <input
+                                type="text"
+                                placeholder="Buscar por número de cuenta..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 pl-11 text-sm text-slate-700 shadow-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition-all"
+                            />
+
+                        </div>
+
                         <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-2xl bg-indigo-50 border border-indigo-100">
                             <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
 
                             <span className="text-sm font-semibold text-indigo-600">
-                                {accounts.length} cuentas
+                                {filteredAccounts.length} cuentas
                             </span>
                         </div>
 
@@ -327,7 +334,7 @@ export const AccountsPage = () => {
 
                                         </td>
                                     </tr>
-                                ) : accounts.length === 0 ? (
+                                ) : filteredAccounts.length === 0 ? (
                                     <tr>
                                         <td colSpan={7} className="py-24">
 
@@ -335,16 +342,16 @@ export const AccountsPage = () => {
 
                                                 <div className="w-24 h-24 rounded-[30px] bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shadow-lg mb-5">
                                                     <span className="text-5xl">
-                                                        🏦
+                                                        🔍
                                                     </span>
                                                 </div>
 
                                                 <h3 className="text-2xl font-bold text-slate-700 mb-2">
-                                                    No hay cuentas
+                                                    No se encontraron cuentas
                                                 </h3>
 
                                                 <p className="text-slate-400 text-center max-w-sm">
-                                                    Crea la primera cuenta bancaria para comenzar a administrar el sistema.
+                                                    Intenta buscar otro número de cuenta.
                                                 </p>
 
                                             </div>
@@ -352,7 +359,7 @@ export const AccountsPage = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    accounts.map((acc) => (
+                                    filteredAccounts.map((acc) => (
 
                                         <tr
                                             key={acc._id}
