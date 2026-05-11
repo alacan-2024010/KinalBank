@@ -6,6 +6,7 @@ import {
   getApprovedUsers,
   approveUser,
   denyUser,
+  getUsersByIds,
 } from './user.controller.js';
 
 import { validateJWT }   from '../../middlewares/validate-JWT.js';
@@ -24,5 +25,8 @@ router.put('/approve',  validateJWT, validateAdmin, approveUser);
 
 // Denegar (elimina la solicitud)
 router.delete('/deny/:id', validateJWT, validateAdmin, denyUser);
+
+// Al final de las rutas, antes del export
+router.post('/by-ids', validateJWT, validateAdmin, getUsersByIds);
 
 export default router;

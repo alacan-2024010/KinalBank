@@ -104,3 +104,26 @@ export const denyUser = async (req, res) => {
     res.status(500).json({ success: false, message: 'Error al denegar usuario' });
   }
 };
+
+// Obtener usuarios por lista de IDs (uso interno entre servicios)
+export const getUsersByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ success: false, message: 'ids debe ser un array' });
+    }
+
+    const { Op } = await import('sequelize');
+
+    const users = await User.findAll({
+      where: { Id: { [Op.in]: ids } },
+      attributes: ['Id', 'Name', 'Username', 'Email', 'DPI', 'Phone', 'Job', 'MonthlyIncome'],
+    });
+
+    return res.json({ success: true, users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error al obtener usuarios por IDs' });
+  }
+};

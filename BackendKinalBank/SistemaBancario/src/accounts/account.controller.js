@@ -1,6 +1,8 @@
 'use strict';
 import {generateAccountNumber} from '../helpers/account-number.js'
 import Account from './account.model.js';
+import axios from 'axios';
+import { User } from '../../../AuthBanco/src/users/user.model.js'; // ajusta la ruta según tu estructura
 
 // Crear cuenta (ADMIN)
 export const createAccount = async (req, res) => {
@@ -91,9 +93,40 @@ export const getAccounts = async (req, res) => {
 
         const total = await Account.countDocuments();
 
+        const ownerIds = [...new Set(accounts.map(a => a.ownerId))];
+        const token = req.headers['authorization'];
+
+        let userMap = {};
+        try {
+            const usersRes = await axios.post(
+                'http://localhost:3005/api/v1/users/by-ids',
+                { ids: ownerIds },
+                { headers: { Authorization: token } }
+            );
+            usersRes.data.users.forEach(u => { userMap[u.Id] = u; });
+        } catch (e) {
+            console.warn('No se pudo obtener info de owners:', e.message);
+        }
+
+        const accountsWithOwner = accounts.map(acc => {
+            const owner = userMap[acc.ownerId] || null;
+            return {
+                ...acc.toObject(),
+                owner: owner ? {
+                    name: owner.Name,
+                    username: owner.Username,
+                    email: owner.Email,
+                    dpi: owner.DPI,
+                    phone: owner.Phone,
+                    job: owner.Job,
+                    monthlyIncome: owner.MonthlyIncome,
+                } : null
+            };
+        });
+
         res.status(200).json({
             success: true,
-            data: accounts,
+            data: accountsWithOwner,
             pagination: {
                 currentPage: page,
                 totalPages: Math.ceil(total / limit),
@@ -103,6 +136,7 @@ export const getAccounts = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Error en getAccounts:', error.message);
         res.status(400).json({
             success: false,
             message: 'Error al listar las cuentas',

@@ -3,6 +3,7 @@ import { useAccountsStore } from "../store/accountStore.js";
 import { AccountModal } from "../components/AccountModal.jsx";
 import { ConfirmModal } from "../components/ConfirmModal.jsx";
 import { Badge } from "../components/Badge.jsx";
+import { AccountOwnerModal } from "../components/AccountOwnerModal.jsx";
 
 const StatCard = ({ label, value, sub, icon, color }) => (
     <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/30 px-5 py-4">
@@ -55,6 +56,8 @@ export const AccountsPage = () => {
     } = useAccountsStore();
 
     const [modal, setModal] = useState({ type: null, account: null });
+
+    const [ownerModal, setOwnerModal] = useState(null);
 
     useEffect(() => {
         fetchAccounts();
@@ -439,6 +442,13 @@ export const AccountsPage = () => {
                                                 <div className="flex items-center gap-3">
 
                                                     <button
+                                                        onClick={() => setOwnerModal(acc)}
+                                                        className="px-4 py-2 rounded-xl bg-slate-50 text-slate-600 font-semibold text-sm hover:bg-slate-100 transition-colors"
+                                                    >
+                                                        Ver info
+                                                    </button>
+
+                                                    <button
                                                         onClick={() => setModal({ type: "edit", account: acc })}
                                                         className="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-600 font-semibold text-sm hover:bg-indigo-100 transition-colors"
                                                     >
@@ -509,6 +519,13 @@ export const AccountsPage = () => {
                     onClose={() => setModal({ type: null })}
                     onSave={handleCreate}
                     loading={loading}
+                />
+            )}
+
+            {ownerModal && (
+                <AccountOwnerModal
+                    account={ownerModal}
+                    onClose={() => setOwnerModal(null)}
                 />
             )}
 
