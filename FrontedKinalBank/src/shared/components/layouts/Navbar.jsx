@@ -1,16 +1,22 @@
-import { useNavigate } from "react-router-dom"
-import { useAuthStore } from "../../../features/auth/store/authStore.js"
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../features/auth/store/authStore";
 
 export const Navbar = () => {
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const logout = useAuthStore((state) => state.logout)
+    const logout = useAuthStore((state) => state.logout);
+
+    // Usuario autenticado
+    const user = useAuthStore((state) => state.user);
 
     const handleLogout = () => {
-        logout()
-        navigate("/", { replace: true })
-    }
+        logout();
+        navigate("/", { replace: true });
+    };
+
+    // Validar rol
+    const isAdmin = user?.role === "ADMIN";
 
     return (
         <header className="h-[78px] bg-[#071126]/95 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-8 sticky top-0 z-50 flex-shrink-0 relative overflow-hidden">
@@ -25,7 +31,7 @@ export const Navbar = () => {
                 onClick={() => navigate("/dashboard")}
             >
 
-                {/* Logo container */}
+                {/* Logo */}
                 <div className="relative">
 
                     <div className="absolute inset-0 rounded-2xl bg-indigo-500/20 blur-xl group-hover:bg-indigo-500/30 transition-all" />
@@ -51,7 +57,7 @@ export const Navbar = () => {
                         <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
 
                         <span className="text-xs text-slate-400 tracking-[0.2em] uppercase font-semibold">
-                            Admin Dashboard
+                            {isAdmin ? "Admin Dashboard" : "Cliente Dashboard"}
                         </span>
                     </div>
 
@@ -62,21 +68,23 @@ export const Navbar = () => {
             {/* Right */}
             <div className="relative z-10 flex items-center gap-4">
 
-                {/* Admin badge */}
+                {/* User badge */}
                 <div className="hidden md:flex items-center gap-3 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
 
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/30">
-                        A
+                        {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
 
                     <div className="flex flex-col">
+
                         <span className="text-white text-sm font-semibold">
-                            Administrador
+                            {user?.name || "Usuario"}
                         </span>
 
                         <span className="text-slate-400 text-xs">
-                            Sistema bancario
+                            {isAdmin ? "Administrador" : "Cliente"}
                         </span>
+
                     </div>
 
                 </div>
@@ -102,5 +110,5 @@ export const Navbar = () => {
             </div>
 
         </header>
-    )
-}
+    );
+};

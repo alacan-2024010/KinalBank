@@ -1,14 +1,7 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../auth/store/authStore.js";
+import { NavLink, Outlet } from "react-router-dom";
+import { Navbar } from "../../../shared/components/layouts/Navbar";
 
 export const ClientLayout = () => {
-    const navigate = useNavigate();
-    const logout = useAuthStore((state) => state.logout);
-
-    const handleLogout = () => {
-        logout();
-        navigate("/", { replace: true });
-    };
 
     const principalItems = [
         { to: "/dashboard/client", label: "Inicio", icon: "🏠", end: true },
@@ -26,105 +19,133 @@ export const ClientLayout = () => {
     ];
 
     return (
-        <div className="h-screen w-screen bg-gray-50 flex flex-col overflow-hidden">
-            {/* Navbar */}
-            <header className="h-[60px] bg-slate-900 flex items-center justify-between px-6 sticky top-0 z-50 border-b border-white/[0.06] flex-shrink-0">
-                <div className="cursor-pointer flex items-center" onClick={() => navigate("/dashboard/client")}>
-                    <img
-                        src="/src/assets/img/KinalBank.png"
-                        alt="KinalBank"
-                        className="h-9 object-contain brightness-0 invert"
-                    />
-                </div>
-                <button
-                    onClick={handleLogout}
-                    className="bg-white/[0.06] border border-white/10 text-white/70 rounded-lg px-4 py-1.5 text-sm font-medium cursor-pointer transition-all hover:bg-white/[0.12]"
-                >
-                    Cerrar sesión
-                </button>
-            </header>
+        <div className="h-screen w-screen bg-[#f4f7fb] flex flex-col overflow-hidden">
+
+            <Navbar />
 
             <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar */}
-                <aside className="w-64 bg-slate-900 flex flex-col overflow-y-auto flex-shrink-0">
-                    <div className="p-6">
-                        <h1 className="text-sm font-bold text-white mb-0.5">KinalBank</h1>
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest mb-8">
-                            Mi Banca
-                        </p>
 
+                {/* Sidebar */}
+                <aside className="w-72 bg-[#071126] relative overflow-hidden flex flex-col flex-shrink-0 border-r border-white/5">
+
+                    {/* Glow */}
+                    <div className="absolute top-[-120px] right-[-120px] w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full" />
+                    <div className="absolute bottom-[-100px] left-[-100px] w-72 h-72 bg-cyan-500/10 blur-3xl rounded-full" />
+
+                    <div className="relative z-10 flex flex-col h-full p-6">
+
+                        {/* Navigation */}
                         <nav className="space-y-1">
+
                             {/* Principal */}
-                            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3 pt-2 pb-1">
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.25em] px-3 pt-2 pb-1">
                                 Principal
                             </p>
+
                             {principalItems.map((item) => (
                                 <NavLink
                                     key={item.to}
                                     to={item.to}
                                     end={item.end}
                                     className={({ isActive }) =>
-                                        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+                                        `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                                             isActive
                                                 ? "bg-white/10 text-white border-l-4 border-indigo-500 pl-2"
                                                 : "text-white/60 hover:bg-white/5 hover:text-white"
                                         }`
                                     }
                                 >
-                                    <span className="text-base leading-none">{item.icon}</span>
+                                    <span className="text-base leading-none">
+                                        {item.icon}
+                                    </span>
+
                                     {item.label}
                                 </NavLink>
                             ))}
 
                             {/* Operaciones */}
-                            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3 pt-4 pb-1">
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.25em] px-3 pt-4 pb-1">
                                 Operaciones
                             </p>
+
                             {operacionesItems.map((item) => (
                                 <NavLink
                                     key={item.to}
                                     to={item.to}
                                     className={({ isActive }) =>
-                                        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+                                        `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                                             isActive
-                                                ? "bg-white/10 text-white border-l-4 border-indigo-500 pl-2"
+                                                ? "bg-white/10 text-white border-l-4 border-emerald-500 pl-2"
                                                 : "text-white/60 hover:bg-white/5 hover:text-white"
                                         }`
                                     }
                                 >
-                                    <span className="text-base leading-none">{item.icon}</span>
+                                    <span className="text-base leading-none">
+                                        {item.icon}
+                                    </span>
+
                                     {item.label}
                                 </NavLink>
                             ))}
 
                             {/* Explorar */}
-                            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider px-3 pt-4 pb-1">
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.25em] px-3 pt-4 pb-1">
                                 Explorar
                             </p>
+
                             {explorarItems.map((item) => (
                                 <NavLink
                                     key={item.to}
                                     to={item.to}
                                     className={({ isActive }) =>
-                                        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+                                        `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                                             isActive
-                                                ? "bg-white/10 text-white border-l-4 border-indigo-500 pl-2"
+                                                ? "bg-white/10 text-white border-l-4 border-orange-500 pl-2"
                                                 : "text-white/60 hover:bg-white/5 hover:text-white"
                                         }`
                                     }
                                 >
-                                    <span className="text-base leading-none">{item.icon}</span>
+                                    <span className="text-base leading-none">
+                                        {item.icon}
+                                    </span>
+
                                     {item.label}
                                 </NavLink>
                             ))}
+
                         </nav>
+
+                        {/* Footer */}
+                        <div className="mt-auto pt-6">
+                            <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-5">
+
+                                <p className="text-white font-semibold text-sm mb-1">
+                                    Sistema bancario
+                                </p>
+
+                                <p className="text-slate-400 text-xs leading-relaxed">
+                                    Panel administrativo moderno para la gestión de usuarios y finanzas.
+                                </p>
+
+                                <div className="mt-4 flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+
+                                    <span className="text-xs text-emerald-300">
+                                        Sistema activo
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
                 </aside>
 
                 {/* Contenido */}
-                <main className="flex-1 bg-gray-50 overflow-y-auto p-8">
+                <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#f8fafc] to-[#eef4ff] p-8">
                     <Outlet />
                 </main>
+
             </div>
         </div>
     );
