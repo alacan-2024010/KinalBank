@@ -102,7 +102,8 @@ export const ProductModal = ({ product, onClose }) => {
                             </p>
 
                             <h3 className="text-2xl font-black text-indigo-600">
-                                Q {Number(product.price).toLocaleString("es-GT", {
+                                Q{" "}
+                                {Number(product.price ?? 0).toLocaleString("es-GT", {
                                     minimumFractionDigits: 2,
                                 })}
                             </h3>

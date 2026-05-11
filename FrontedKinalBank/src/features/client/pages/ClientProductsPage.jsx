@@ -230,18 +230,16 @@ export const ClientProductsPage = () => {
                     {/* Search */}
                     <div className="flex-1 relative">
 
-                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
-                            🔍
-                        </span>
-
                         <input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Buscar productos o servicios..."
-                            className="w-full bg-white border border-gray-200 rounded-2xl pl-14 pr-5 py-4 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-300 transition-all"
+                            className="w-full bg-white border border-gray-200 rounded-2xl pl-5 pr-14 py-4 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-300 transition-all"
                         />
 
+
                     </div>
+
 
                 </div>
 
