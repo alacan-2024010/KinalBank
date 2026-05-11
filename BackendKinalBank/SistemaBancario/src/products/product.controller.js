@@ -1,8 +1,9 @@
 'use strict';
 
+import mongoose from 'mongoose';
 import Product from './product.model.js';
 
-// CREAR PRODUCTO / SERVICIO (ADMIN)
+// ─── CREAR PRODUCTO / SERVICIO (ADMIN) ───
 export const createProduct = async (req, res) => {
   try {
     const { name, description, type, price, status } = req.body;
@@ -18,9 +19,9 @@ export const createProduct = async (req, res) => {
       name,
       description,
       type,
-      price,
-      status,
-      createdBy: req.user.id  // solo el ID del usuario
+      price: price || 0,
+      status: status ?? true,
+      createdBy: req.user.id
     });
 
     return res.status(201).json({
@@ -30,7 +31,7 @@ export const createProduct = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error); // esto imprimirá la razón exacta
+    console.error('Error al crear producto:', error);
     return res.status(500).json({
       success: false,
       message: 'Error al crear producto'
@@ -38,18 +39,13 @@ export const createProduct = async (req, res) => {
   }
 };
 
-
-// OBTENER TODOS (PUBLICO o ADMIN)
+// ─── OBTENER TODOS LOS PRODUCTOS (PUBLICO / ADMIN) ───
 export const getProducts = async (req, res) => {
   try {
     const products = await Product.find({ status: true });
-
-    return res.json({
-      success: true,
-      products
-    });
-
+    return res.json({ success: true, products });
   } catch (error) {
+    console.error('Error al obtener productos:', error);
     return res.status(500).json({
       success: false,
       message: 'Error al obtener productos'
@@ -57,63 +53,53 @@ export const getProducts = async (req, res) => {
   }
 };
 
-
-// ACTUALIZAR (ADMIN)
+// ─── ACTUALIZAR PRODUCTO (ADMIN) ───
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'ID inválido' });
+    }
+
     const product = await Product.findById(id);
 
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Producto no encontrado'
-      });
+      return res.status(404).json({ success: false, message: 'Producto no encontrado' });
     }
 
-    await product.updateOne(req.body);
+    Object.assign(product, req.body); // actualizar solo los campos enviados
+    await product.save();
 
-    return res.json({
-      success: true,
-      message: 'Producto actualizado correctamente'
-    });
-
+    return res.json({ success: true, message: 'Producto actualizado correctamente', product });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Error al actualizar producto'
-    });
+    console.error('Error al actualizar producto:', error);
+    return res.status(500).json({ success: false, message: 'Error al actualizar producto' });
   }
 };
 
-
-// ELIMINAR (DESACTIVAR) (ADMIN)
+// ─── ELIMINAR PRODUCTO (DESACTIVAR) (ADMIN) ───
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'ID inválido' });
+    }
+
     const product = await Product.findById(id);
 
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Producto no encontrado'
-      });
+      return res.status(404).json({ success: false, message: 'Producto no encontrado' });
     }
 
+    // Soft delete
     product.status = false;
     await product.save();
 
-    return res.json({
-      success: true,
-      message: 'Producto desactivado correctamente'
-    });
-
+    return res.json({ success: true, message: 'Producto desactivado correctamente', product });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Error al eliminar producto'
-    });
+    console.error('Error al eliminar producto:', error);
+    return res.status(500).json({ success: false, message: 'Error al eliminar producto' });
   }
 };

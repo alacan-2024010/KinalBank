@@ -13,6 +13,7 @@ import { ClientProductsPage } from "../../features/client/pages/ClientProductsPa
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { RoleRedirect } from "./RoleRedirect.jsx";
 import { DepositPage } from "../../features/admin-general/pages/DepositPage.jsx";
+import { ProductsPage } from "../../features/admin-general/pages/ProductsPage.jsx";
 
 export const AppRoutes = () => {
     return (
