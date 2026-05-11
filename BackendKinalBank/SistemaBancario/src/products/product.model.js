@@ -18,6 +18,11 @@ const productSchema = new mongoose.Schema(
             enum: ['PRODUCTO', 'SERVICIO'],
             required: true
         },
+        price: {
+            type: Number,
+            required: true,
+            min: 0
+        },
         status: {
             type: Boolean,
             default: true
