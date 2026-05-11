@@ -1,9 +1,13 @@
 import { create } from 'zustand'
 import { loginRequest, registerRequest, forgotPasswordRequest, profileRequest } from '../../../shared/api'
 
+// Cargar user y token desde localStorage al iniciar
+const initialUser = JSON.parse(localStorage.getItem('user')) || null
+const initialToken = localStorage.getItem('token') || null
+
 export const useAuthStore = create((set) => ({
-    user: null,
-    token: localStorage.getItem('token') || null,
+    user: initialUser,
+    token: initialToken,
     loading: false,
     error: null,
 
@@ -13,7 +17,9 @@ export const useAuthStore = create((set) => ({
 
             const res = await loginRequest(data)
 
+            // Guardar token y user en localStorage
             localStorage.setItem('token', res.data.token)
+            localStorage.setItem('user', JSON.stringify(res.data.user))
 
             set({
                 user: res.data.user,
@@ -74,14 +80,17 @@ export const useAuthStore = create((set) => ({
         try {
             const res = await profileRequest()
             set({ user: res.data.user })
+            localStorage.setItem('user', JSON.stringify(res.data.user)) // <--- persistir
         } catch {
             localStorage.removeItem('token')
+            localStorage.removeItem('user') // <--- limpiar si falla
             set({ user: null, token: null })
         }
     },
 
     logout: () => {
         localStorage.removeItem('token')
+        localStorage.removeItem('user') // <--- limpiar usuario
         set({ user: null, token: null })
     }
 }))

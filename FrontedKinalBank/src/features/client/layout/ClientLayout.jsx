@@ -119,19 +119,16 @@ export const ClientLayout = () => {
                         <div className="mt-auto pt-6">
                             <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-5">
 
-                                <p className="text-white font-semibold text-sm mb-1">
-                                    Sistema bancario
-                                </p>
-
-                                <p className="text-slate-400 text-xs leading-relaxed">
-                                    Panel administrativo moderno para la gestión de usuarios y finanzas.
+                                <p className="text-white font-bold text-sm mb-1">
+                                    Con tus ahorros,
+                                    <br />
+                                    construyes logros.
                                 </p>
 
                                 <div className="mt-4 flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-
                                     <span className="text-xs text-emerald-300">
-                                        Sistema activo
+                                        Bancar Virtual Activa
                                     </span>
                                 </div>
 
