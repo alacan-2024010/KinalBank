@@ -201,7 +201,7 @@ export const ForgotPasswordForm = ({ onSwitch }) => {
         {formError && (
           <div style={styles.alertError}>
             <svg viewBox="0 0 20 20" fill="none" width="18" height="18"
-              style={{ flexShrink: 0, marginTop: "1px", color: "#dc2626" }}>
+              style={{ flexShrink: 0, marginTop: "1px", color: "#ec1a1a" }}>
               <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.25"/>
               <path d="M10 7v3.5M10 13.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
