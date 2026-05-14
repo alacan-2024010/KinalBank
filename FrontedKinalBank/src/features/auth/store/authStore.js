@@ -34,26 +34,22 @@ export const useAuthStore = create((set) => ({
                 error: err.response?.data?.message || 'Error de autenticación',
                 loading: false
             })
-            return { success: false }
+            return { success: false, error: err.response?.data?.message || 'Error de autenticación' }
         }
     },
 
     register: async (data) => {
         try {
             set({ loading: true, error: null })
-
             const res = await registerRequest(data)
-
             set({ loading: false })
-
             return { success: true, data: res.data }
-
         } catch (err) {
             set({
                 error: err.response?.data?.message || 'Error en registro',
                 loading: false
             })
-            return { success: false }
+            return { success: false, error: err.response?.data?.message || 'Error en registro' }
         }
     },
 

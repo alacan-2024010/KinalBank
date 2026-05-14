@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useAuthStore } from "../store/authStore"
-import toast from "react-hot-toast"
 
 const styles = {
   wrapper: {
@@ -120,6 +119,15 @@ const styles = {
     textDecoration: "underline",
     textUnderlineOffset: "2px",
   },
+  alertError: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "12px",
+    padding: "14px 16px",
+    borderRadius: "4px",
+    border: "1px solid #fca5a5",
+    background: "#fef2f2",
+  },
 }
 
 const Field = ({ label, error, children }) => (
@@ -131,6 +139,7 @@ const Field = ({ label, error, children }) => (
 )
 
 export const RegisterForm = ({ onSwitch }) => {
+  const [registerError, setRegisterError] = useState(null)
   const [registered, setRegistered] = useState(false)
   const [hoverBtn, setHoverBtn] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -138,12 +147,12 @@ export const RegisterForm = ({ onSwitch }) => {
   const loading = useAuthStore(state => state.loading)
 
   const onSubmit = async (data) => {
-    console.log("Datos enviados:", data)
+    setRegisterError(null)
     const res = await registerUser(data)
     if (res.success) {
       setRegistered(true)
     } else {
-      toast.error(res.error || "Error en el registro")
+      setRegisterError(res.error)
     }
   }
 
@@ -237,14 +246,15 @@ export const RegisterForm = ({ onSwitch }) => {
                 placeholder="1234567890101"
                 {...register("dpi", {
                   required: "Requerido",
-                  validate: v => v.length === 13 || "El DPI debe tener 13 dígitos"
+                  pattern: { value: /^\d{13}$/, message: "El DPI debe tener 13 dígitos" }
                 })}
               />
             </Field>
             <Field label="Teléfono" error={errors.phone?.message}>
               <input
                 className={`auth-input${errors.phone ? " auth-input-error" : ""}`}
-                style={styles.input}
+                style={styles.input
+                }
                 placeholder="+502 0000-0000"
                 {...register("phone", { required: "Requerido" })}
               />
@@ -284,6 +294,24 @@ export const RegisterForm = ({ onSwitch }) => {
           </div>
 
         </div>
+
+        {registerError && (
+          <div style={styles.alertError}>
+            <svg viewBox="0 0 20 20" fill="none" width="18" height="18"
+              style={{ flexShrink: 0, marginTop: "1px", color: "#dc2626" }}>
+              <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.25"/>
+              <path d="M10 7v3.5M10 13.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <div>
+              <p style={{ fontSize: "12px", fontWeight: 700, color: "#991b1b", margin: "0 0 3px", letterSpacing: "0.04em" }}>
+                Error en el registro
+              </p>
+              <p style={{ fontSize: "12px", color: "#b91c1c", lineHeight: 1.55, margin: 0 }}>
+                {registerError}
+              </p>
+            </div>
+          </div>
+        )}
 
         <button
           type="submit"
