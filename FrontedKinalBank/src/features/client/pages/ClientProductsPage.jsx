@@ -173,7 +173,6 @@ export const ClientProductsPage = () => {
 
                 {/* Search */}
                 <div className="flex-1 relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
                     <input
                         value={search}
                         onChange={e => setSearch(e.target.value)}
