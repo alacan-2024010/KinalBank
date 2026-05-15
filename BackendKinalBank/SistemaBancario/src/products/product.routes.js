@@ -5,7 +5,8 @@ import {
   createProduct,
   getProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  buyProduct
 } from './product.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
 import { validateAdmin } from '../middlewares/validate-admin.js';
@@ -95,5 +96,7 @@ router.put('/update/:id', validateJWT, validateAdmin, updateProduct);
  *           type: string
  */
 router.delete('/delete/:id', validateJWT, validateAdmin, deleteProduct);
+
+router.post('/buy/:id', validateJWT,validateClient, buyProduct);
 
 export default router;
