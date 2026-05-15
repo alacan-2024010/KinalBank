@@ -118,7 +118,7 @@ const FavoriteCard = ({ favorite, onEdit, onDelete, onTransfer, deleting }) => (
       onClick={() => onTransfer(favorite)}
       className="w-full rounded-2xl bg-gradient-to-r from-[#16213E] to-indigo-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-indigo-200 hover:shadow-lg"
     >
-      Transferir dinero →
+      Transferir
     </button>
   </div>
 );
@@ -207,7 +207,7 @@ export const ClientFavoritesPage = () => {
             {/* Tarjeta flotante derecha */}
             <div className="flex-shrink-0 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 p-5 text-white min-w-[180px]">
               <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 mb-1">
-                Total guardados
+                Tus Favoritos
               </p>
               <p className="text-3xl font-black">{favorites.length}</p>
               <p className="text-xs text-slate-300 mt-1">Cuentas favoritas</p>
@@ -240,7 +240,7 @@ export const ClientFavoritesPage = () => {
           <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="absolute inset-x-0 top-0 h-1 bg-red-400 rounded-t-2xl" />
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Seguridad</p>
-            <h2 className="mt-3 text-3xl font-black text-emerald-500">Protegido</h2>
+            <h2 className="mt-3 text-3xl font-black text-red-500">Protegido</h2>
             <p className="mt-1 text-xs text-slate-400">Cifrado de extremo a extremo</p>
           </div>
 

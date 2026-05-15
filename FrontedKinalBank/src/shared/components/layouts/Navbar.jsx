@@ -92,23 +92,19 @@ export const Navbar = () => {
                 {/* Logout */}
                 <button
                     onClick={handleLogout}
-                    className="group relative overflow-hidden px-5 py-3 rounded-2xl border border-red-500/20 bg-red-500/10 text-red-300 hover:text-white transition-all duration-300 hover:scale-105"
+                    className="group relative overflow-hidden px-5 py-3 rounded-2xl border border-red-500/30
+                        bg-red-500/10 text-red-300 transition-all duration-300 hover:scale-105 hover:text-white"
                 >
-
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
 
                     <span className="relative z-10 flex items-center gap-2 text-sm font-semibold">
-                        <span className="text-base">
+                        <span className="text-base transition-transform duration-300 group-hover:rotate-12">
                             ⎋
                         </span>
-
                         Cerrar sesión
                     </span>
-
                 </button>
-
             </div>
-
         </header>
     );
 };
