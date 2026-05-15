@@ -12,3 +12,6 @@ export const updateProduct = (productId, updatedData) =>
 
 export const deleteProduct = (productId) =>
     coreApi.delete(`/products/delete/${productId}`);
+
+export const buyProduct = (id, data) =>
+    coreApi.post(`/products/buy/${id}`, data);

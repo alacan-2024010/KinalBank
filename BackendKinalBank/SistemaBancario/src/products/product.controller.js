@@ -3,6 +3,7 @@
 import mongoose from 'mongoose';
 import Product from './product.model.js';
 import Transaction from '../transactions/transaction.model.js';
+import Account from '../accounts/account.model.js';
 
 // ─── CREAR PRODUCTO / SERVICIO (ADMIN) ───
 export const createProduct = async (req, res) => {

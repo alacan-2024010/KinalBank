@@ -10,6 +10,7 @@ import {
 } from './product.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
 import { validateAdmin } from '../middlewares/validate-admin.js';
+import {validateClient} from "../middlewares/validate-client.js"
 
 const router = Router();
 

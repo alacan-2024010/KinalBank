@@ -3,6 +3,7 @@ import {
     createProduct as apiCreateProduct,
     getProducts as apiGetProducts,
     updateProduct as apiUpdateProduct,
+    buyProduct as apiBuyProduct,
     deleteProduct as apiDeleteProduct
 } from "../../../shared/api/products.js";
 
@@ -75,6 +76,19 @@ export const useProductsStore = create((set, get) => ({
                 loading: false
             });
             throw err;
+        }
+    },
+
+    buyProduct: async (productId, accountId) => {
+        set({ loading: true, error: null, successMessage: null });
+        try {
+            const { data } = await apiBuyProduct(productId, { accountId });
+            set({ successMessage: "Compra realizada correctamente", loading: false });
+            return { success: true, data };
+        } catch (err) {
+            const msg = err.response?.data?.message ?? "Error al procesar la compra";
+            set({ error: msg, loading: false });
+            return { success: false, message: msg };
         }
     },
 
