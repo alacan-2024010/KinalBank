@@ -8,10 +8,9 @@ const CURRENCY_SYMBOLS = {
 
 const TYPE_META = {
     DEPOSITO:      { label: "Depósito",      bg: "bg-emerald-100", text: "text-emerald-700", icon: "↓", dot: "bg-emerald-500" },
-    CREDITO:       { label: "Crédito",       bg: "bg-sky-100",     text: "text-sky-700",     icon: "↓", dot: "bg-sky-500" },
-    RETIRO:        { label: "Retiro",        bg: "bg-rose-100",    text: "text-rose-700",    icon: "↑", dot: "bg-rose-500" },
     TRANSFERENCIA: { label: "Transferencia", bg: "bg-violet-100",  text: "text-violet-700",  icon: "⇄", dot: "bg-violet-500" },
-    DEBITO:        { label: "Débito",        bg: "bg-orange-100",  text: "text-orange-700",  icon: "↑", dot: "bg-orange-500" },
+    COMPRA:        { label: "Compra",        bg: "bg-orange-100",  text: "text-orange-700",  icon: "🛍", dot: "bg-orange-500" },
+    CREDITO:       { label: "Crédito",       bg: "bg-sky-100",     text: "text-sky-700",     icon: "↓", dot: "bg-sky-500"     },
 };
 
 const getMeta = (type, isCredit) =>
@@ -30,8 +29,8 @@ const formatDate = (iso) => {
 
 const TxRow = ({ tx }) => {
     const isCredit = tx.type === "DEPOSITO" || tx.type === "CREDITO";
-    const symbol   = CURRENCY_SYMBOLS[tx.currency] ?? tx.currency ?? "Q";
-    const amount   = Number(tx.amountReceived ?? tx.amountSent ?? tx.amount ?? 0);
+    const symbol   = CURRENCY_SYMBOLS[isCredit ? tx.currencyTo : tx.currencyFrom] ?? "Q";
+    const amount   = Number(isCredit ? tx.amountReceived : tx.amountSent) || 0;
     const meta     = getMeta(tx.type, isCredit);
     const date     = formatDate(tx.createdAt);
 
@@ -53,7 +52,7 @@ const TxRow = ({ tx }) => {
                             <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
                             {meta.label}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">#{tx.referenceNumber ?? tx._id?.slice(-8)}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">#{tx._id?.slice(-8)}</span>
                     </div>
                 </div>
             </div>
@@ -71,10 +70,9 @@ const TxRow = ({ tx }) => {
 const FILTERS = [
     { key: "TODOS",         label: "Todos" },
     { key: "DEPOSITO",      label: "Depósito" },
-    { key: "RETIRO",        label: "Retiro" },
     { key: "TRANSFERENCIA", label: "Transferencia" },
+    { key: "COMPRA",        label: "Compra" },
     { key: "CREDITO",       label: "Crédito" },
-    { key: "DEBITO",        label: "Débito" },
 ];
 
 export const ClientTransactionsPage = () => {
@@ -94,11 +92,11 @@ export const ClientTransactionsPage = () => {
 
     const totalCreditos = transactions
         .filter(tx => tx.type === "DEPOSITO" || tx.type === "CREDITO")
-        .reduce((s, tx) => s + Number(tx.amountReceived ?? tx.amount ?? 0), 0);
+        .reduce((s, tx) => s + Number(tx.amountReceived ?? 0), 0);
 
     const totalDebitos = transactions
-        .filter(tx => tx.type !== "DEPOSITO" && tx.type !== "CREDITO")
-        .reduce((s, tx) => s + Number(tx.amountSent ?? tx.amount ?? 0), 0);
+        .filter(tx => tx.type === "TRANSFERENCIA" || tx.type === "COMPRA")
+        .reduce((s, tx) => s + Number(tx.amountSent ?? 0), 0);
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 pb-10">
@@ -127,7 +125,9 @@ export const ClientTransactionsPage = () => {
                             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-base">📊</div>
                         </div>
                         <p className="text-2xl font-black text-slate-900 tabular-nums">{transactions.length}</p>
-                        <p className="text-[11px] text-slate-400 mt-1.5">Página {pagination.currentPage ?? 1} de {pagination.totalPages ?? 1}</p>
+                        <p className="text-[11px] text-slate-400 mt-1.5">
+                            Página {pagination.currentPage ?? 1} de {pagination.totalPages ?? 1}
+                        </p>
                     </div>
                 </div>
 
@@ -157,10 +157,9 @@ export const ClientTransactionsPage = () => {
                         <p className="text-2xl font-black text-rose-600 tabular-nums">
                             Q {totalDebitos.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
                         </p>
-                        <p className="text-[11px] text-rose-400 mt-1.5">Retiros y transferencias</p>
+                        <p className="text-[11px] text-rose-400 mt-1.5">Transferencias y compras</p>
                     </div>
                 </div>
-
             </div>
 
             {error && (
@@ -181,7 +180,7 @@ export const ClientTransactionsPage = () => {
                             <button
                                 key={f.key}
                                 onClick={() => setFilter(f.key)}
-                                className={`text-[10px] font-bold tracking-wider uppercase px-3 py-1.5 rounded-lg transition-all duration-150 ${
+                                className={`text-[10px] font-bold tracking-wider uppercase px-3 py-1.5 rounded-lg transition-all duration-150 cursor-pointer ${
                                     filter === f.key
                                         ? "bg-white text-slate-900"
                                         : "text-white/50 hover:text-white hover:bg-white/10"
@@ -230,14 +229,14 @@ export const ClientTransactionsPage = () => {
                         <button
                             onClick={() => changePage(pagination.currentPage - 1)}
                             disabled={pagination.currentPage === 1}
-                            className="px-4 py-2 text-xs font-bold bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                            className="px-4 py-2 text-xs font-bold bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
                         >
                             ← Anterior
                         </button>
                         <button
                             onClick={() => changePage(pagination.currentPage + 1)}
                             disabled={pagination.currentPage === pagination.totalPages}
-                            className="px-4 py-2 text-xs font-bold bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                            className="px-4 py-2 text-xs font-bold bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm cursor-pointer"
                         >
                             Siguiente →
                         </button>

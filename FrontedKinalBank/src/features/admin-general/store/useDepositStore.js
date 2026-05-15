@@ -1,32 +1,46 @@
 import { create } from "zustand";
 
 import {
-    getDepositsRequest,
-    createDepositRequest,
-    revertDepositRequest,
-    deleteDepositRequest,
-    getDepositByIdRequest,
-    updateDepositRequest
-} from "../services/depositService.js";
+    getDeposits,
+    createDeposit,
+    revertDeposit,
+    deleteDeposit,
+    getDepositById,
+    updateDeposit,
+    getMyDeposits  // 👈 nueva
+} from "../../../shared/api/deposits.js";
 
 export const useDepositStore = create((set, get) => ({
 
     deposits: [],
+    myDeposits: [],        // 👈 nuevo
     selectedDeposit: null,
     isLoading: false,
 
     getDeposits: async () => {
         try {
             set({ isLoading: true });
-            const response = await getDepositsRequest();
+            const response = await getDeposits();
             if (response.data.success) {
-                set({
-                    deposits: response.data.deposits
-                });
+                set({ deposits: response.data.deposits });
             }
-
         } catch (error) {
             console.log("ERROR GET DEPOSITS:", error);
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
+    // 👇 nueva función para el cliente
+    fetchMyDeposits: async (accountId) => {
+        try {
+            set({ isLoading: true });
+            const response = await getMyDeposits(accountId);
+            if (response.data.success) {
+                set({ myDeposits: response.data.deposits });
+            }
+        } catch (error) {
+            console.log("ERROR GET MY DEPOSITS:", error);
         } finally {
             set({ isLoading: false });
         }
@@ -35,7 +49,7 @@ export const useDepositStore = create((set, get) => ({
     createDeposit: async (data) => {
         try {
             set({ isLoading: true });
-            const response = await createDepositRequest(data);
+            const response = await createDeposit(data);
             if (response.data.success) {
                 await get().getDeposits();
             }
@@ -51,12 +65,10 @@ export const useDepositStore = create((set, get) => ({
     revertDeposit: async (id) => {
         try {
             set({ isLoading: true });
-            const response = await revertDepositRequest(id);
+            const response = await revertDeposit(id);
             if (response.data.success) {
-
                 await get().getDeposits();
             }
-
             return response.data;
         } catch (error) {
             console.log("ERROR REVERT DEPOSIT:", error);
@@ -69,7 +81,7 @@ export const useDepositStore = create((set, get) => ({
     deleteDeposit: async (id) => {
         try {
             set({ isLoading: true });
-            const response = await deleteDepositRequest(id);
+            const response = await deleteDeposit(id);
             if (response.data.success) {
                 await get().getDeposits();
             }
@@ -83,60 +95,33 @@ export const useDepositStore = create((set, get) => ({
     },
 
     getDepositById: async (id) => {
-
         try {
-
             set({ isLoading: true });
-
-            const response = await getDepositByIdRequest(id);
-
+            const response = await getDepositById(id);
             if (response.data.success) {
-
-                set({
-                    selectedDeposit: response.data.data
-                });
+                set({ selectedDeposit: response.data.data });
             }
-
             return response.data;
-
         } catch (error) {
-
             console.log("ERROR GET DEPOSIT BY ID:", error);
-
             throw error;
-
         } finally {
-
             set({ isLoading: false });
         }
     },
 
     updateDeposit: async (id, data) => {
-
         try {
-
             set({ isLoading: true });
-
-            const response = await updateDepositRequest(
-                id,
-                data
-            );
-
+            const response = await updateDeposit(id, data);
             if (response.data.success) {
-
                 await get().getDeposits();
             }
-
             return response.data;
-
         } catch (error) {
-
             console.log("ERROR UPDATE DEPOSIT:", error);
-
             throw error;
-
         } finally {
-
             set({ isLoading: false });
         }
     }

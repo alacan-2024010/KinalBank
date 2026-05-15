@@ -5,10 +5,12 @@ import {
     getMyTransactions
 } from "../../../shared/api/transactions.js";
 import { getMyAccounts } from "../../../shared/api/client.js";
+import { getMyDeposits } from "../../../shared/api/deposits.js";
  
 export const useClientStore = create((set, get) => ({
     accounts: [],
     transactions: [],
+    deposits: [], 
     pagination: {
         currentPage: 1,
         totalPages: 1,
@@ -39,6 +41,18 @@ export const useClientStore = create((set, get) => ({
                     err.response?.data?.message ??
                     "Error al cargar cuentas",
             });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    fetchMyDeposits: async (accountId) => {  
+        set({ loading: true, error: null });
+        try {
+            const { data } = await getMyDeposits(accountId);
+            set({ deposits: data.deposits ?? [] });
+        } catch (err) {
+            set({ error: err.response?.data?.message ?? "Error al cargar depósitos" });
         } finally {
             set({ loading: false });
         }

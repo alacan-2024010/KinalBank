@@ -233,3 +233,24 @@ export const deleteDeposit = async (req, res) => {
         }); 
     }
 };
+
+export const getMyDeposits = async (req, res) => {
+    try {
+        const { accountId } = req.params;
+        const deposits = await Deposit.find({ 
+            accountId,
+            estado: 'COMPLETADO'
+        }).sort({ fecha: -1 });
+
+        return res.status(200).json({
+            success: true,
+            deposits
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error al obtener depósitos',
+            error: err.message
+        });
+    }
+};
