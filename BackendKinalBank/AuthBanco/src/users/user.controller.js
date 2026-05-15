@@ -4,7 +4,6 @@ import { User } from './user.model.js';
 import { Role } from '../auth/role.model.js';
 
 
-// Ver usuarios pendientes (solo admin)
 export const getPendingUsers = async (req, res) => {
   try {
     const users = await User.findAll({
@@ -21,7 +20,6 @@ export const getPendingUsers = async (req, res) => {
 };
 
 
-// Ver usuarios aprobados — para el selector al crear cuentas (solo admin)
 export const getApprovedUsers = async (req, res) => {
   try {
     const { search = '' } = req.query;
@@ -52,7 +50,6 @@ export const getApprovedUsers = async (req, res) => {
 };
 
 
-// Aprobar usuario
 export const approveUser = async (req, res) => {
   try {
     const { userId, role } = req.body;
@@ -79,7 +76,6 @@ export const approveUser = async (req, res) => {
 };
 
 
-// Denegar usuario — elimina la solicitud pendiente
 export const denyUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -105,7 +101,6 @@ export const denyUser = async (req, res) => {
   }
 };
 
-// Obtener usuarios por lista de IDs (uso interno entre servicios)
 export const getUsersByIds = async (req, res) => {
   try {
     const { ids } = req.body;
@@ -131,7 +126,7 @@ export const getUsersByIds = async (req, res) => {
 // Editar perfil propio (cliente)
 export const updateMyProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // viene del JWT
+    const userId = req.userId; // ← CORREGIDO: usa req.userId que pone el middleware
 
     const { Name, Address, Job, MonthlyIncome } = req.body;
 
@@ -151,12 +146,12 @@ export const updateMyProfile = async (req, res) => {
       success: true,
       message: 'Perfil actualizado correctamente',
       user: {
-        Id:           user.Id,
-        Name:         user.Name,
-        Username:     user.Username,
-        Email:        user.Email,
-        Address:      user.Address,
-        Job:          user.Job,
+        Id:            user.Id,
+        Name:          user.Name,
+        Username:      user.Username,
+        Email:         user.Email,
+        Address:       user.Address,
+        Job:           user.Job,
         MonthlyIncome: user.MonthlyIncome,
       }
     });
@@ -169,7 +164,7 @@ export const updateMyProfile = async (req, res) => {
 // Obtener perfil propio (cliente)
 export const getMyProfile = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId; // ← CORREGIDO también aquí por consistencia
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['Password'] }

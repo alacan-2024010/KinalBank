@@ -13,4 +13,4 @@ export const profileRequest = () =>
   axiosAuth.get('/auth/profile')
 
 export const updateProfileRequest = (data) =>
-    api.put("/users/me", data);
+  axiosAuth.put("/users/me", data)
