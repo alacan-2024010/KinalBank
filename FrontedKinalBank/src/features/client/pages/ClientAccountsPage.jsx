@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useClientStore } from "../store/clientStore.js";
+import { useClientStore } from "../store/useClientStore.js";
 
 const CURRENCY_SYMBOLS = {
     GTQ: "Q", USD: "$", EUR: "€", GBP: "£", MXN: "MX$",
@@ -7,66 +7,66 @@ const CURRENCY_SYMBOLS = {
 };
 
 const TYPE_META = {
-    DEPOSITO:      { label: "Depósito",      bg: "bg-emerald-100", text: "text-emerald-700", icon: "↓", dot: "bg-emerald-500" },
-    CREDITO:       { label: "Crédito",       bg: "bg-sky-100",     text: "text-sky-700",     icon: "↓", dot: "bg-sky-500" },
-    RETIRO:        { label: "Retiro",        bg: "bg-rose-100",    text: "text-rose-700",    icon: "↑", dot: "bg-rose-500" },
-    TRANSFERENCIA: { label: "Transferencia", bg: "bg-violet-100",  text: "text-violet-700",  icon: "⇄", dot: "bg-violet-500" },
-    DEBITO:        { label: "Débito",        bg: "bg-orange-100",  text: "text-orange-700",  icon: "↑", dot: "bg-orange-500" },
+    DEPOSITO:      { label: "Depósito",      pill: "bg-emerald-100 text-emerald-700", icon: "↓", line: "bg-emerald-400", amount: "text-emerald-600" },
+    CREDITO:       { label: "Crédito",       pill: "bg-sky-100 text-sky-700",         icon: "↓", line: "bg-sky-400",     amount: "text-sky-600" },
+    RETIRO:        { label: "Retiro",        pill: "bg-rose-100 text-rose-700",       icon: "↑", line: "bg-rose-400",    amount: "text-rose-600" },
+    TRANSFERENCIA: { label: "Transferencia", pill: "bg-violet-100 text-violet-700",   icon: "⇄", line: "bg-violet-400",  amount: "text-violet-600" },
+    DEBITO:        { label: "Débito",        pill: "bg-orange-100 text-orange-700",   icon: "↑", line: "bg-orange-400",  amount: "text-orange-600" },
 };
 
 const getMeta = (type, isCredit) =>
     TYPE_META[type] ?? (isCredit
-        ? { label: type, bg: "bg-emerald-100", text: "text-emerald-700", icon: "↓", dot: "bg-emerald-500" }
-        : { label: type, bg: "bg-rose-100",    text: "text-rose-700",    icon: "↑", dot: "bg-rose-500" });
+        ? { label: type, pill: "bg-emerald-100 text-emerald-700", icon: "↓", line: "bg-emerald-400", amount: "text-emerald-600" }
+        : { label: type, pill: "bg-rose-100 text-rose-700",       icon: "↑", line: "bg-rose-400",    amount: "text-rose-600" });
 
-// ── Fila de transacción ───────────────────────────────────────────────────────
+/* ─── Fila de transacción ─────────────────────────────────────────────── */
 const TxRow = ({ tx, accountId }) => {
     const isCredit =
-        tx.type === "DEPOSITO" ||
-        tx.type === "CREDITO"  ||
+        tx.type === "DEPOSITO" || tx.type === "CREDITO" ||
         String(tx.toAccount?._id) === String(accountId);
 
     const amount   = Number(isCredit ? tx.amountReceived : tx.amountSent) || 0;
-    const currency = isCredit
-        ? (tx.toAccount?.currency   ?? tx.currencyTo)
-        : (tx.fromAccount?.currency ?? tx.currencyFrom);
+    const currency = isCredit ? (tx.toAccount?.currency ?? tx.currencyTo) : (tx.fromAccount?.currency ?? tx.currencyFrom);
     const symbol   = CURRENCY_SYMBOLS[currency] ?? "Q";
     const meta     = getMeta(tx.type, isCredit);
 
-    const d = new Date(tx.createdAt);
+    const d     = new Date(tx.createdAt);
     const day   = d.toLocaleDateString("es-GT", { day: "2-digit" });
     const month = d.toLocaleDateString("es-GT", { month: "short" }).replace(".", "").toUpperCase();
 
     return (
-        <div className="grid grid-cols-[44px_1fr_auto] gap-3 items-center px-5 py-3.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-all duration-150">
-            <div className="flex flex-col items-center">
-                <span className="text-[9px] font-bold tracking-widest text-slate-400">{month}</span>
-                <span className="text-base font-black text-slate-700 leading-none">{day}</span>
+        <div className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group">
+            {/* Date */}
+            <div className="w-10 flex-shrink-0 text-center">
+                <p className="text-lg font-black text-slate-800 leading-none">{day}</p>
+                <p className="text-[8px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">{month}</p>
             </div>
 
-            <div className="flex items-center gap-2.5 min-w-0">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${meta.bg} ${meta.text}`}>
-                    {meta.icon}
-                </div>
-                <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-800 truncate">{tx.description ?? tx.type}</p>
-                    <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full ${meta.bg} ${meta.text}`}>
-                        <span className={`w-1 h-1 rounded-full ${meta.dot}`} />
-                        {meta.label}
-                    </span>
-                </div>
+            {/* Color line */}
+            <div className={`w-0.5 h-10 flex-shrink-0 rounded-full ${meta.line}`} />
+
+            {/* Icon */}
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black flex-shrink-0 ${isCredit ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}>
+                {meta.icon}
             </div>
 
-            <div className="text-right">
-                <p className={`text-sm font-black tabular-nums ${isCredit ? "text-emerald-600" : "text-rose-500"}`}>
-                    {isCredit ? "+" : "−"}{symbol} {amount.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
-                </p>
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-slate-700 truncate">{tx.description ?? tx.type}</p>
+                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${meta.pill}`}>
+                    {meta.label}
+                </span>
             </div>
+
+            {/* Amount */}
+            <p className={`text-sm font-black tabular-nums flex-shrink-0 ${isCredit ? "text-emerald-600" : "text-rose-500"}`}>
+                {isCredit ? "+" : "−"}{symbol} {amount.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
+            </p>
         </div>
     );
 };
 
-// ── Panel lateral ─────────────────────────────────────────────────────────────
+/* ─── Panel lateral ───────────────────────────────────────────────────── */
 const HistoryPanel = ({ account, transactions, loading, onClose }) => {
     if (!account) return null;
 
@@ -76,90 +76,105 @@ const HistoryPanel = ({ account, transactions, loading, onClose }) => {
         String(tx.toAccount?._id)   === String(account._id)
     );
 
-    const totalCreditos = txs
-        .filter(tx => tx.type === "DEPOSITO" || tx.type === "CREDITO" || String(tx.toAccount?._id) === String(account._id))
-        .reduce((s, tx) => s + (Number(tx.amountReceived) || 0), 0);
+    console.log("DEPOSITO ejemplo:", txs.find(tx => tx.type === "DEPOSITO")); // 👈
 
+    const totalCreditos = txs
+        .filter(tx =>
+            tx.type === "DEPOSITO" || tx.type === "CREDITO" ||
+            String(tx.toAccount?._id) === String(account._id)
+        )
+        .reduce((s, tx) => s + (Number(tx.amountReceived) || Number(tx.amount) || 0), 0);
     const totalDebitos = txs
-        .filter(tx => tx.type !== "DEPOSITO" && tx.type !== "CREDITO" && String(tx.toAccount?._id) !== String(account._id))
-        .reduce((s, tx) => s + (Number(tx.amountSent) || 0), 0);
+        .filter(tx =>
+            tx.type !== "DEPOSITO" && tx.type !== "CREDITO" &&
+            String(tx.toAccount?._id) !== String(account._id)
+        )
+        .reduce((s, tx) => s + (Number(tx.amountSent) || Number(tx.amount) || 0), 0);
 
     return (
         <>
-            <div className="fixed inset-0 bg-black/40 z-40 transition-opacity" onClick={onClose} />
+            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40" onClick={onClose} />
 
-            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col">
+            <div className="fixed top-0 right-0 h-full w-full max-w-[440px] bg-white z-50 flex flex-col shadow-2xl">
 
-                {/* Header oscuro */}
-                <div className="bg-slate-900 px-6 py-5 flex items-center justify-between">
-                    <div>
-                        <p className="text-[10px] text-white/40 font-mono tracking-wider mb-0.5">Nº {account.accountNumber}</p>
-                        <h2 className="text-base font-bold text-white">Historial de Transacciones</h2>
+                {/* Header — navy matching sidebar */}
+                <div className="relative overflow-hidden bg-slate-900 px-7 py-6 flex items-start justify-between">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-transparent pointer-events-none" />
+                    {/* Decorative circles */}
+                    <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-blue-500/10 pointer-events-none" />
+                    <div className="absolute -bottom-8 right-8 w-24 h-24 rounded-full bg-indigo-500/10 pointer-events-none" />
+
+                    <div className="relative">
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-1 h-6 bg-blue-400 rounded-full" />
+                            <p className="text-[9px] font-black tracking-[0.25em] text-blue-400 uppercase">Historial de cuenta</p>
+                        </div>
+                        <h2 className="text-xl font-black text-white leading-tight">Movimientos</h2>
+                        <p className="text-[10px] text-slate-400 font-mono mt-1">Nº {account.accountNumber}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white/70 hover:bg-white/20 transition-colors text-sm font-bold"
-                    >
-                        ✕
-                    </button>
+                        className="relative w-8 h-8 rounded-xl bg-white/10 border border-white/10 text-white/60 hover:bg-white/20 hover:text-white transition-all text-xs font-bold flex items-center justify-center cursor-pointer"
+                    >✕</button>
                 </div>
 
-                {/* Balance con barra de color */}
-                <div className="border-b border-slate-100 overflow-hidden">
-                    <div className="h-1 bg-gradient-to-r from-indigo-400 to-violet-500" />
-                    <div className="px-6 py-4 bg-slate-50">
-                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Saldo actual</p>
-                        <p className="text-2xl font-black text-slate-900 tabular-nums">
+                {/* Balance — blue accent matching dashboard */}
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-7 py-5 flex items-center justify-between">
+                    <div>
+                        <p className="text-[9px] font-black tracking-[0.2em] text-blue-200/70 uppercase mb-1">Saldo actual</p>
+                        <p className="text-2xl font-black text-white tabular-nums">
                             {symbol} {Number(account.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })}
                         </p>
-                        <p className="text-xs text-slate-400 mt-0.5">{account.currency} · {account.accountType ?? "Ahorro"}</p>
                     </div>
-
-                    {/* Mini stats */}
-                    <div className="grid grid-cols-2 border-t border-slate-100">
-                        <div className="px-6 py-3 border-r border-slate-100">
-                            <p className="text-[9px] font-bold tracking-widest text-emerald-500 uppercase mb-0.5">Entradas</p>
-                            <p className="text-sm font-black text-emerald-600 tabular-nums">
-                                +{symbol} {totalCreditos.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
-                            </p>
-                        </div>
-                        <div className="px-6 py-3">
-                            <p className="text-[9px] font-bold tracking-widest text-rose-500 uppercase mb-0.5">Salidas</p>
-                            <p className="text-sm font-black text-rose-500 tabular-nums">
-                                −{symbol} {totalDebitos.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
-                            </p>
-                        </div>
+                    <div className="text-right">
+                        <p className="text-[10px] text-blue-200/60">{account.currency}</p>
+                        <p className="text-sm font-black text-white">{account.accountType ?? "Ahorro"}</p>
                     </div>
                 </div>
 
-                {/* Lista */}
-                <div className="flex-1 overflow-y-auto">
-                    {/* Columnas */}
-                    <div className="grid grid-cols-[44px_1fr_auto] gap-3 px-5 py-2.5 bg-slate-50 border-b border-slate-100">
-                        <p className="text-[9px] font-bold tracking-widest text-slate-400 uppercase">Fecha</p>
-                        <p className="text-[9px] font-bold tracking-widest text-slate-400 uppercase">Descripción</p>
-                        <p className="text-[9px] font-bold tracking-widest text-slate-400 uppercase text-right">Monto</p>
+                {/* Stats */}
+                <div className="grid grid-cols-2 border-b border-slate-100 bg-slate-50">
+                    <div className="px-6 py-4 border-r border-slate-100">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                            <p className="text-[8px] font-black tracking-widest text-slate-400 uppercase">Entradas</p>
+                        </div>
+                        <p className="text-base font-black text-emerald-600 tabular-nums">
+                            +{symbol} {totalCreditos.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
+                        </p>
                     </div>
+                    <div className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                            <span className="w-2 h-2 rounded-full bg-rose-400" />
+                            <p className="text-[8px] font-black tracking-widest text-slate-400 uppercase">Salidas</p>
+                        </div>
+                        <p className="text-base font-black text-rose-500 tabular-nums">
+                            −{symbol} {totalDebitos.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
+                        </p>
+                    </div>
+                </div>
 
+                {/* List */}
+                <div className="flex-1 overflow-y-auto bg-white">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center h-32 gap-3">
-                            <div className="w-6 h-6 border-2 border-slate-200 border-t-slate-500 rounded-full animate-spin" />
-                            <p className="text-xs text-slate-400">Cargando…</p>
+                        <div className="flex flex-col items-center justify-center h-48 gap-3">
+                            <div className="w-7 h-7 border-2 border-slate-100 border-t-blue-500 rounded-full animate-spin" />
+                            <p className="text-sm text-slate-400">Cargando…</p>
                         </div>
                     ) : txs.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-40 gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-xl">📋</div>
-                            <p className="text-sm font-semibold text-slate-500">Sin movimientos</p>
-                            <p className="text-xs text-slate-400">en esta cuenta</p>
+                        <div className="flex flex-col items-center justify-center h-56 gap-3">
+                            <p className="text-7xl font-black text-slate-100">0</p>
+                            <p className="text-sm font-bold text-slate-400">Sin movimientos</p>
                         </div>
                     ) : (
                         <>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest px-5 pt-3 pb-1">
-                                {txs.length} movimiento{txs.length !== 1 ? "s" : ""}
-                            </p>
-                            {txs.map((tx, i) => (
-                                <TxRow key={tx._id ?? i} tx={tx} accountId={account._id} />
-                            ))}
+                            <div className="px-6 pt-4 pb-2 flex items-center gap-2">
+                                <div className="w-4 h-0.5 bg-blue-400 rounded-full" />
+                                <p className="text-[9px] font-black tracking-[0.2em] text-slate-400 uppercase">
+                                    {txs.length} movimiento{txs.length !== 1 ? "s" : ""}
+                                </p>
+                            </div>
+                            {txs.map((tx, i) => <TxRow key={tx._id ?? i} tx={tx} accountId={account._id} />)}
                         </>
                     )}
                 </div>
@@ -168,75 +183,100 @@ const HistoryPanel = ({ account, transactions, loading, onClose }) => {
     );
 };
 
-// ── Tarjeta de cuenta ─────────────────────────────────────────────────────────
-const CARD_GRADIENTS = [
-    "from-slate-800 to-slate-900",
-    "from-indigo-800 to-slate-900",
-    "from-violet-800 to-slate-900",
-    "from-sky-800 to-slate-900",
+/* ─── Tarjeta de cuenta ───────────────────────────────────────────────── */
+const CARD_PALETTES = [
+    // Navy → Blue (matches sidebar exactly)
+    { bg: "bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900", glow: "bg-blue-500",   chip: "from-blue-400 to-blue-600",    btn: "bg-blue-500 hover:bg-blue-400 text-white",   accent: "text-blue-400",   num: "text-blue-400/10" },
+    // Slate → Indigo
+    { bg: "bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800", glow: "bg-indigo-500", chip: "from-indigo-400 to-indigo-600", btn: "bg-indigo-500 hover:bg-indigo-400 text-white", accent: "text-indigo-400", num: "text-indigo-400/10" },
+    // Deep teal
+    { bg: "bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900",   glow: "bg-cyan-500",   chip: "from-cyan-400 to-cyan-600",     btn: "bg-cyan-500 hover:bg-cyan-400 text-slate-900", accent: "text-cyan-400",   num: "text-cyan-400/10" },
+    // Slate → violet
+    { bg: "bg-gradient-to-br from-slate-800 via-violet-950 to-slate-900", glow: "bg-violet-500", chip: "from-violet-400 to-violet-600", btn: "bg-violet-500 hover:bg-violet-400 text-white", accent: "text-violet-400", num: "text-violet-400/10" },
 ];
 
 const AccountCard = ({ account, onViewHistory, index }) => {
     const isActive = account.status === "ACTIVA";
     const symbol   = CURRENCY_SYMBOLS[account.currency] ?? "Q";
-    const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+    const pal      = CARD_PALETTES[index % CARD_PALETTES.length];
+    const bal      = Number(account.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 });
+    const bigNum   = bal.replace(/[^0-9]/g, "").slice(0, 4) || "0000";
 
     return (
-        <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col border border-slate-200">
+        <div className={`relative rounded-3xl overflow-hidden shadow-lg ${pal.bg} flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-white/5`}>
 
-            {/* Parte superior con gradiente oscuro */}
-            <div className={`bg-gradient-to-br ${gradient} p-6 flex flex-col gap-4`}>
-                <div className="flex items-start justify-between">
-                    <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-xl">💳</div>
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+            {/* Giant decorative number */}
+            <span className={`absolute -right-3 top-0 text-[90px] font-black leading-none select-none pointer-events-none ${pal.num}`}>
+                {bigNum}
+            </span>
+
+            {/* Top accent line */}
+            <div className={`h-0.5 w-full bg-gradient-to-r ${pal.chip}`} />
+
+            <div className="relative p-6 flex flex-col gap-5 flex-1">
+
+                {/* Chip + status */}
+                <div className="flex items-center justify-between">
+                    <div className={`w-9 h-6 rounded-md bg-gradient-to-br ${pal.chip} shadow-lg opacity-90 flex items-center justify-center`}>
+                        <div className="w-5 h-3.5 rounded-sm bg-white/20" />
+                    </div>
+
+                    <span className={`flex items-center gap-1.5 text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full ${
                         isActive
-                            ? "bg-emerald-400/20 text-emerald-300 border border-emerald-400/30"
-                            : "bg-rose-400/20 text-rose-300 border border-rose-400/30"
+                            ? "bg-white/10 text-white border border-white/15"
+                            : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
                     }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-white animate-pulse" : "bg-rose-300"}`} />
                         {account.status}
                     </span>
                 </div>
 
-                <div>
-                    <p className="text-[10px] text-white/40 font-mono tracking-widest mb-1">Nº {account.accountNumber}</p>
-                    <p className="text-2xl font-black text-white tabular-nums">
-                        {symbol} {Number(account.balance).toLocaleString("es-GT", { minimumFractionDigits: 2 })}
+                {/* Balance */}
+                <div className="flex-1">
+                    <p className="text-[10px] font-bold tracking-[0.18em] text-white/30 uppercase mb-2">Nº {account.accountNumber}</p>
+                    <p className="text-[30px] font-black text-white leading-none tabular-nums tracking-tight">
+                        {symbol} {bal}
                     </p>
-                    <p className="text-xs text-white/40 mt-0.5">{account.currency} · {account.accountType ?? "Ahorro"}</p>
+                    <p className={`text-xs font-bold mt-2 ${pal.accent}`}>{account.currency} · {account.accountType ?? "Ahorro"}</p>
                 </div>
-            </div>
 
-            {/* Parte inferior blanca */}
-            <div className="bg-white p-5 flex flex-col gap-4 flex-1">
-                {account.createdAt && (
-                    <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Apertura</span>
-                        <span className="font-semibold text-slate-700">
-                            {new Date(account.createdAt).toLocaleDateString("es-GT", {
-                                day: "2-digit", month: "long", year: "numeric"
-                            })}
-                        </span>
-                    </div>
-                )}
-                {account.owner && (
-                    <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Titular</span>
-                        <span className="font-semibold text-slate-700">{account.owner}</span>
-                    </div>
-                )}
+                {/* Divider */}
+                <div className="h-px bg-white/8" />
 
-                <button
-                    onClick={() => onViewHistory(account)}
-                    className="mt-auto w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-900 text-white text-xs font-bold tracking-wide hover:bg-slate-700 transition-all cursor-pointer"
-                >
-                    📋 Ver historial
-                </button>
+                {/* Footer */}
+                <div className="flex items-end justify-between gap-3">
+                    <div className="space-y-1.5">
+                        {account.createdAt && (
+                            <div>
+                                <p className="text-[8px] text-white/25 uppercase tracking-widest">Apertura</p>
+                                <p className="text-xs font-semibold text-white/55">
+                                    {new Date(account.createdAt).toLocaleDateString("es-GT", {
+                                        day: "2-digit", month: "short", year: "numeric"
+                                    })}
+                                </p>
+                            </div>
+                        )}
+                        {account.owner && (
+                            <div>
+                                <p className="text-[8px] text-white/25 uppercase tracking-widest">Titular</p>
+                                <p className="text-xs font-semibold text-white/55">{account.owner}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <button
+                        onClick={() => onViewHistory(account)}
+                        className={`flex-shrink-0 px-5 py-2.5 rounded-2xl text-[11px] font-black tracking-wide shadow-lg transition-all hover:scale-105 cursor-pointer ${pal.btn}`}
+                    >
+                        Historial →
+                    </button>
+                </div>
             </div>
         </div>
     );
 };
 
-// ── Página principal ──────────────────────────────────────────────────────────
+/* ─── Página principal ────────────────────────────────────────────────── */
 export const ClientAccountsPage = () => {
     const {
         accounts, transactions, loading, error,
@@ -250,105 +290,256 @@ export const ClientAccountsPage = () => {
         fetchMyTransactions(1);
     }, []);
 
-    const activas   = accounts.filter(a => a.status === "ACTIVA");
-    const inactivas = accounts.filter(a => a.status !== "ACTIVA");
-
+    const activas      = accounts.filter(a => a.status === "ACTIVA");
+    const inactivas    = accounts.filter(a => a.status !== "ACTIVA");
     const totalBalance = activas.reduce((s, a) => s + Number(a.balance), 0);
+    const totalStr     = totalBalance.toLocaleString("es-GT", { minimumFractionDigits: 2 });
 
     return (
         <>
-            <div className="max-w-5xl mx-auto space-y-6 pb-10">
+            <div className="relative max-w-5xl mx-auto pb-20 space-y-8">
 
-                {/* Header */}
-                <div className="flex items-end justify-between">
-                    <div>
-                        <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-1">KinalBank</p>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Mis Cuentas</h1>
-                        <p className="text-sm text-slate-500 mt-1">
-                            {accounts.length} cuenta{accounts.length !== 1 ? "s" : ""} asociada{accounts.length !== 1 ? "s" : ""} a tu perfil
-                        </p>
-                    </div>
-                    <span className="text-xs text-slate-500 font-mono bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
-                        {accounts.length} cuenta{accounts.length !== 1 ? "s" : ""}
+                {/* ── Hero header — navy matches sidebar ─────────────────── */}
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 border border-white/5 shadow-xl p-8">
+
+                    {/* Decorative circles */}
+                    <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-blue-500/10 pointer-events-none" />
+                    <div className="absolute -bottom-10 right-32 w-32 h-32 rounded-full bg-indigo-500/10 pointer-events-none" />
+
+                    {/* Giant decorative balance */}
+                    <span className="absolute right-0 top-0 text-[110px] font-black text-white/[0.04] leading-none select-none pointer-events-none tracking-tighter whitespace-nowrap pr-6">
+                        Q {totalStr}
                     </span>
+
+                    {/* Left accent bar */}
+                    <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-indigo-400 to-blue-600 rounded-r-full" />
+
+                    <div className="relative flex items-end justify-between gap-6 flex-wrap">
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-6 h-0.5 bg-blue-400 rounded-full" />
+                                <p className="text-[9px] font-black tracking-[0.3em] text-blue-400 uppercase">KinalBank</p>
+                            </div>
+                            <h1 className="text-5xl font-black text-white leading-none tracking-tighter mb-3">
+                                Mis<br />Cuentas
+                            </h1>
+                            <p className="text-slate-300 text-sm text-[15px]">
+                                {accounts.length} cuenta{accounts.length !== 1 ? "s" : ""} · {activas.length} activa{activas.length !== 1 ? "s" : ""}
+                            </p>
+                        </div>
+
+                        {/* Balance card */}
+                        {accounts.length > 0 && (
+                            <div className="bg-white/8 backdrop-blur-sm rounded-2xl px-7 py-5 border border-white/10 min-w-[200px] flex-shrink-0">
+                                <p className="text-[10px] font-black tracking-[0.25em] text-blue-300/70 uppercase mb-2">Balance total</p>
+                                <p className="text-3xl font-black text-white tabular-nums tracking-tight">
+                                    Q {totalStr}
+                                </p>
+                                <p className="text-[12px] text-slate-400 mt-1">Cuentas activas</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Stat cards */}
+                {/* ── Stat cards ── */}
                 {accounts.length > 0 && (
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                            <div className="h-1.5 bg-gradient-to-r from-slate-400 to-slate-600" />
-                            <div className="p-5">
-                                <div className="flex items-start justify-between mb-3">
-                                    <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Total cuentas</p>
-                                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-base">🏦</div>
-                                </div>
-                                <p className="text-2xl font-black text-slate-900">{accounts.length}</p>
-                                <p className="text-[11px] text-slate-400 mt-1.5">{activas.length} activa{activas.length !== 1 ? "s" : ""}</p>
-                            </div>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                        <div className="bg-white rounded-2xl border border-indigo-200 shadow-sm overflow-hidden col-span-2">
-                            <div className="h-1.5 bg-gradient-to-r from-indigo-400 to-violet-500" />
-                            <div className="p-5">
-                                <div className="flex items-start justify-between mb-3">
-                                    <p className="text-[10px] font-bold tracking-widest text-indigo-500 uppercase">Balance total (cuentas activas)</p>
-                                    <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-sm font-black text-indigo-600">Q</div>
+                        {[
+                            {
+                                label: "Total cuentas",
+                                value: accounts.length,
+                                sub: `${activas.length} activa${activas.length !== 1 ? "s" : ""}`,
+                                icon: "🏦",
+                                bar: "from-blue-500 to-indigo-600",
+                                bg: "bg-blue-50",
+                                text: "text-blue-700",
+                            },
+                            {
+                                label: "Cuentas activas",
+                                value: activas.length,
+                                sub: "En operación",
+                                icon: "✓",
+                                bar: "from-emerald-500 to-green-600",
+                                bg: "bg-emerald-50",
+                                text: "text-emerald-700",
+                            },
+                            {
+                                label: "Inactivas",
+                                value: inactivas.length,
+                                sub: "Suspendidas",
+                                icon: "○",
+                                bar: "from-rose-500 to-red-600",
+                                bg: "bg-rose-50",
+                                text: "text-rose-700",
+                            },
+                        ].map((s, i) => (
+                            <div
+                                key={i}
+                                className="
+                                    relative
+                                    overflow-hidden
+                                    rounded-3xl
+                                    bg-white
+                                    border
+                                    border-slate-200
+                                    p-7
+                                    shadow-sm
+                                    hover:shadow-xl
+                                    hover:-translate-y-1
+                                    transition-all
+                                    duration-300
+                                "
+                            >
+                                {/* Barra superior */}
+                                <div
+                                    className={`
+                                        absolute
+                                        top-0
+                                        left-0
+                                        right-0
+                                        h-2
+                                        bg-gradient-to-r
+                                        ${s.bar}
+                                    `}
+                                />
+
+                                {/* Glow */}
+                                <div
+                                    className={`
+                                        absolute
+                                        -top-10
+                                        -right-10
+                                        w-32
+                                        h-32
+                                        rounded-full
+                                        blur-3xl
+                                        opacity-20
+                                        ${s.bg}
+                                    `}
+                                />
+
+                                {/* Header */}
+                                <div className="relative flex items-start justify-between mb-6 pt-2">
+
+                                    <div>
+                                        <p
+                                            className="
+                                                text-[11px]
+                                                font-black
+                                                tracking-[0.25em]
+                                                text-slate-400
+                                                uppercase
+                                            "
+                                        >
+                                            {s.label}
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        className={`
+                                            w-14
+                                            h-14
+                                            rounded-2xl
+                                            flex
+                                            items-center
+                                            justify-center
+                                            text-2xl
+                                            ${s.bg}
+                                            ${s.text}
+                                        `}
+                                    >
+                                        {s.icon}
+                                    </div>
                                 </div>
-                                <p className="text-2xl font-black text-indigo-700 tabular-nums">
-                                    Q {totalBalance.toLocaleString("es-GT", { minimumFractionDigits: 2 })}
-                                </p>
-                                <p className="text-[11px] text-indigo-400 mt-1.5">Suma de saldos disponibles</p>
+
+                                {/* Número */}
+                                <div className="relative">
+                                    <h2
+                                        className={`
+                                            text-6xl
+                                            font-black
+                                            leading-none
+                                            ${s.text}
+                                        `}
+                                    >
+                                        {s.value}
+                                    </h2>
+
+                                    <p className="text-sm text-slate-500 mt-4 font-medium">
+                                        {s.sub}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 )}
 
+                {/* Error */}
                 {error && (
-                    <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-2xl px-5 py-4 flex items-center gap-3">
+                    <div className="bg-rose-50 border-l-4 border-rose-400 text-rose-700 text-sm px-5 py-4 rounded-xl flex items-center gap-3">
                         <span>⚠️</span> {error}
                     </div>
                 )}
 
+                {/* Loading */}
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20 gap-3">
-                        <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-500 rounded-full animate-spin" />
-                        <p className="text-sm text-slate-400">Cargando cuentas…</p>
+                    <div className="flex flex-col items-center justify-center py-28 gap-4">
+                        <div className="w-10 h-10 border-[3px] border-slate-200 border-t-blue-500 rounded-full animate-spin" />
+                        <p className="text-sm font-semibold text-slate-400 tracking-wide">Cargando cuentas…</p>
                     </div>
+
                 ) : accounts.length === 0 ? (
-                    <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-16 text-center">
-                        <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-2xl mx-auto mb-4">🏦</div>
-                        <p className="text-sm font-semibold text-slate-500">Aún no tienes cuentas asociadas</p>
-                        <p className="text-xs text-slate-400 mt-1">Contacta con el banco para abrir una cuenta.</p>
+                    <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 p-20 text-center">
+                        <p className="text-7xl font-black text-slate-200 mb-4">0</p>
+                        <p className="text-sm font-bold text-slate-500">Aún no tienes cuentas asociadas</p>
+                        <p className="text-xs text-slate-400 mt-1">Contacta con el banco para abrir una.</p>
                     </div>
+
                 ) : (
                     <>
+                        {/* Activas */}
                         {activas.length > 0 && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-4">
-                                    <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cuentas activas</p>
-                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600">{activas.length}</span>
+                            <section className="space-y-5">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]" />
+                                        <p className="text-[10px] font-black tracking-[0.25em] text-slate-500 uppercase">Cuentas Activas</p>
+                                    </div>
+                                    <div className="flex-1 h-px bg-slate-200" />
+                                    <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-full">
+                                        {activas.length}
+                                    </span>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                                     {activas.map((acc, i) => (
                                         <AccountCard key={acc._id} account={acc} onViewHistory={setSelectedAccount} index={i} />
                                     ))}
                                 </div>
-                            </div>
+                            </section>
                         )}
 
+                        {/* Inactivas */}
                         {inactivas.length > 0 && (
-                            <div>
-                                <div className="flex items-center gap-3 mb-4">
-                                    <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cuentas inactivas</p>
-                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-600">{inactivas.length}</span>
+                            <section className="space-y-5">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="w-2 h-2 rounded-full bg-slate-400" />
+                                        <p className="text-[10px] font-black tracking-[0.25em] text-slate-500 uppercase">Cuentas Inactivas</p>
+                                    </div>
+                                    <div className="flex-1 h-px bg-slate-200" />
+                                    <span className="text-[10px] font-black text-slate-600 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">
+                                        {inactivas.length}
+                                    </span>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 opacity-60">
                                     {inactivas.map((acc, i) => (
-                                        <AccountCard key={acc._id} account={acc} onViewHistory={setSelectedAccount} index={i} />
+                                        <AccountCard key={acc._id} account={acc} onViewHistory={setSelectedAccount} index={activas.length + i} />
                                     ))}
                                 </div>
-                            </div>
+                            </section>
                         )}
                     </>
                 )}

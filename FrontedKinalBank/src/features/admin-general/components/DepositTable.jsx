@@ -1,4 +1,4 @@
-import { useDepositStore } from "../store/depositStore.js";
+import { useDepositStore } from "../store/useDepositStore.js";
 
 export const DepositTable = ({ deposits }) => {
 

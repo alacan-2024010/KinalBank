@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { useAuthStore } from "../store/authStore.js"
+import { useAuthStore } from "../store/useAuthStore.js"
 import toast from "react-hot-toast"
 import { useState } from "react"
 

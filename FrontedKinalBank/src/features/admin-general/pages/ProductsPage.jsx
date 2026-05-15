@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ProductModal } from "../components/ProductModal.jsx";
 import { CreateProductModal } from "../components/CreateProductModal.jsx";
-import { useProductsStore } from "../store/productStore.js";
+import { useProductsStore } from "../store/useProductStore.js";
 
 const StatCard = ({ label, value, sub, icon, color }) => (
   <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-white/85 backdrop-blur-xl shadow-lg shadow-slate-200/30 px-5 py-4">

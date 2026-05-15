@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../../features/auth/store/authStore";
+import { useAuthStore } from "../../../features/auth/store/useAuthStore.js";
 
 const items = [
     {

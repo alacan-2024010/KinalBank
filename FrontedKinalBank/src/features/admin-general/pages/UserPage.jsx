@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useUsersStore } from "../store/userStore";
+import { useUsersStore } from "../store/useUserStore.js";
 import { ApproveModal } from "../components/ApproveModal";
 
 export const UsersPage = () => {

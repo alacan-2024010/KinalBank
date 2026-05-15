@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthStore } from "../../auth/store/authStore.js";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
 
 export const EditProfileModal = ({ onClose }) => {
     const { user, updateProfile, loading } = useAuthStore();

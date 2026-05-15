@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useClientStore } from "../store/clientStore.js";
+import { useClientStore } from "../store/useClientStore.js";
 
 const CURRENCY_SYMBOLS = {
     GTQ: "Q", USD: "$", EUR: "€", GBP: "£", MXN: "MX$",

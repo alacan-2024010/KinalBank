@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAdminTransactionsStore } from "../store/adminTransactionsStore.js";
+import { useAdminTransactionsStore } from "../store/useAdminTransactionsStore.js";
 import { Badge } from "../components/Badge.jsx";
 
 const TxRow = ({ tx }) => {

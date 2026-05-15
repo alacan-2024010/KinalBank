@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useProductsStore } from "../store/productsStore.js";
+import { useProductsStore } from "../store/useProductsStore.js";
 import { ProductModal } from "../components/ProductModal.jsx";
 
 const TYPE_CONFIG = {

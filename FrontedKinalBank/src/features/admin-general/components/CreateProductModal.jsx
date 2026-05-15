@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useProductsStore } from "../store/productStore.js";
+import { useProductsStore } from "../store/useProductStore.js";
 
 export const CreateProductModal = ({ product, onClose }) => {
   const { createProduct, updateProduct } = useProductsStore();

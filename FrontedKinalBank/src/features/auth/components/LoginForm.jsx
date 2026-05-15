@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { useAuthStore } from "../store/authStore"
+import { useAuthStore } from "../store/useAuthStore.js"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 

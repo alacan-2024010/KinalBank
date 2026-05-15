@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFavoritesStore } from "../store/favoritesStore.js";
+import { useFavoritesStore } from "../store/useFavoritesStore.js";
 import { AddFavoriteModal } from "../components/AddFavoriteModal.jsx";
 import { EditFavoriteModal } from "../components/EditFavoriteModal.jsx";
 

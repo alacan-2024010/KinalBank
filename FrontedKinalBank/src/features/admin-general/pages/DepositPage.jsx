@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { DepositTable } from "../components/DepositTable.jsx";
 import { DepositModal } from "../components/DepositModal.jsx";
-import { useDepositStore } from "../store/depositStore.js";
+import { useDepositStore } from "../store/useDepositStore.js";
 
 const StatCard = ({ label, value, sub, icon, color }) => (
     <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-white/85 backdrop-blur-xl shadow-lg shadow-slate-200/30 px-5 py-4">

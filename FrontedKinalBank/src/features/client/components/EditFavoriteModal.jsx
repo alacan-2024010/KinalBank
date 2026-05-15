@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useFavoritesStore } from "../store/favoritesStore.js";
+import { useFavoritesStore } from "../store/useFavoritesStore.js";
 
 export const EditFavoriteModal = ({ favorite, onClose }) => {
   const { updateFavorite, loading, error, successMessage, clearMessages } =

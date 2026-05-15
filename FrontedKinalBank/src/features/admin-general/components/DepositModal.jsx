@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useDepositStore } from "../store/depositStore.js";
-import { useAccountsStore } from "../store/accountStore.js";
+import { useDepositStore } from "../store/useDepositStore.js";
+import { useAccountsStore } from "../store/useAccountStore.js";
 
 export const DepositModal = () => {
 

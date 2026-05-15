@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useClientStore } from "../store/clientStore.js";
-import { useAuthStore } from "../../auth/store/authStore.js";
+import { useClientStore } from "../store/useClientStore.js";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import { EditProfileModal } from "../components/EditProfileModal.jsx";
 
 const StatCard = ({ label, value, sub, icon, color = "indigo" }) => {

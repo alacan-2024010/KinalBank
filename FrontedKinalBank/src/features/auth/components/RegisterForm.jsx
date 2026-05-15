@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useAuthStore } from "../store/authStore"
+import { useAuthStore } from "../store/useAuthStore.js"
 
 const styles = {
   wrapper: {

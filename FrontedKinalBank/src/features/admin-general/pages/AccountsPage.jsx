@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAccountsStore } from "../store/accountStore.js";
+import { useAccountsStore } from "../store/useAccountStore.js";
 import { AccountModal } from "../components/AccountModal.jsx";
 import { ConfirmModal } from "../components/ConfirmModal.jsx";
 import { Badge } from "../components/Badge.jsx";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useClientStore } from "../store/clientStore.js";
+import { useClientStore } from "../store/useClientStore.js";
 import { TransferModal } from "../components/TransferModal.jsx";
 
 const CURRENCY_SYMBOLS = {
