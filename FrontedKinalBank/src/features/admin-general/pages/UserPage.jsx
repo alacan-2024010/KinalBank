@@ -257,13 +257,13 @@ export const UsersPage = () => {
             <div className="max-w-6xl mx-auto">
 
                 {error && (
-                    <div 
+                    <div
                         className="mb-6 rounded-2xl border border-red-200/80 bg-gradient-to-r from-red-50 via-red-50/80 to-orange-50/50 px-5 py-4 flex items-center justify-between shadow-lg shadow-red-100/50 overflow-hidden relative"
                         style={{ animation: 'fadeSlideIn 0.4s ease-out' }}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent" />
                         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-300/50 to-transparent" />
-                        
+
                         <div className="flex items-center gap-4 relative z-10">
                             <div className="relative">
                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center shadow-sm">
@@ -276,7 +276,7 @@ export const UsersPage = () => {
                                 <p className="text-red-600 text-sm">{error}</p>
                             </div>
                         </div>
-                        
+
                         <button
                             onClick={clearError}
                             className="relative z-10 w-9 h-9 rounded-xl bg-red-100/80 hover:bg-red-200 text-red-400 hover:text-red-600 transition-all duration-300 flex items-center justify-center hover:scale-110 hover:rotate-90"
@@ -286,7 +286,7 @@ export const UsersPage = () => {
                     </div>
                 )}
 
-            
+
                 <div className="relative overflow-hidden rounded-[36px] bg-gradient-to-br from-[#050d1a] via-[#0a1628] to-[#12243f] p-8 md:p-10 lg:p-12 shadow-2xl shadow-slate-900/30 mb-8">
                     <div className="absolute top-[-40%] right-[-15%] w-[450px] h-[450px] bg-gradient-to-br from-orange-600/20 via-orange-500/10 to-transparent blur-3xl rounded-full animate-pulse" style={{ animationDuration: '4s' }} />
                     <div className="absolute bottom-[-50%] left-[-10%] w-[350px] h-[350px] bg-gradient-to-tr from-indigo-500/20 via-indigo-400/10 to-transparent blur-3xl rounded-full animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }} />
@@ -398,7 +398,7 @@ export const UsersPage = () => {
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
                 </div>
 
-                <div 
+                <div
                     className="relative rounded-[32px] border border-slate-200/60 bg-white/95 backdrop-blur-xl shadow-2xl shadow-slate-300/30 overflow-hidden"
                     style={{ animation: 'fadeSlideIn 0.6s ease-out 0.2s both' }}
                 >
@@ -482,7 +482,7 @@ export const UsersPage = () => {
                                     <div className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 border-4 border-white flex items-center justify-center text-white shadow-lg shadow-emerald-300/50">
                                         <SparklesIcon className="w-5 h-5" />
                                     </div>
-                                    
+
                                     <div className="absolute inset-0 rounded-[32px] bg-emerald-400/20 blur-xl -z-10" />
                                 </div>
 
@@ -493,7 +493,7 @@ export const UsersPage = () => {
                                 <p className="text-slate-400 text-center max-w-md leading-relaxed">
                                     Actualmente no existen solicitudes pendientes dentro del sistema. Las nuevas solicitudes apareceran aqui automaticamente.
                                 </p>
-                                
+
                                 <div className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
                                     <span className="text-emerald-600 text-sm font-semibold">Sistema sincronizado</span>
@@ -618,10 +618,10 @@ export const UsersPage = () => {
                                                     >
                                                         {/* Button glow */}
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                                                        
+
                                                         {/* Shine sweep */}
                                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-                                                        
+
                                                         <span className="relative z-10 flex items-center gap-2">
                                                             Revisar
                                                             <ArrowRightIcon className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
