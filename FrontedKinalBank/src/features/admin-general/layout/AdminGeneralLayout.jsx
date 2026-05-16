@@ -12,9 +12,10 @@ export const AdminGeneralLayout = () => {
                 {/* Sidebar */}
                 <aside className="w-72 bg-[#071126] relative overflow-hidden flex flex-col flex-shrink-0 border-r border-white/5">
 
-                    {/* Glow */}
+                    {/* Glows */}
                     <div className="absolute top-[-120px] right-[-120px] w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full" />
                     <div className="absolute bottom-[-100px] left-[-100px] w-72 h-72 bg-cyan-500/10 blur-3xl rounded-full" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-500/5 blur-3xl rounded-full pointer-events-none" />
 
                     <div className="relative z-10 flex flex-col h-full p-6">
 
@@ -23,15 +24,15 @@ export const AdminGeneralLayout = () => {
 
                             {/* Usuarios */}
                             <div>
-                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.25em] px-3 mb-3">
+                                <p className="text-[10px] font-semibold text-slate-500/60 uppercase tracking-[0.22em] px-3 mb-3 flex items-center gap-2 after:content-[''] after:flex-1 after:h-px after:bg-gradient-to-r after:from-slate-500/20 after:to-transparent">
                                     Usuarios
                                 </p>
 
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
                                     <NavLink
                                         to="/dashboard/users"
                                         className={({ isActive }) =>
-                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                            `group relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 ${
                                                 isActive
                                                     ? "bg-gradient-to-r from-indigo-500/20 to-cyan-500/10 border border-indigo-400/20 shadow-lg shadow-indigo-500/10"
                                                     : "hover:bg-white/5 border border-transparent"
@@ -40,7 +41,7 @@ export const AdminGeneralLayout = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all duration-300 ${
                                                     isActive
                                                         ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
                                                         : "bg-white/5 text-slate-300 group-hover:bg-white/10"
@@ -49,19 +50,19 @@ export const AdminGeneralLayout = () => {
                                                 </div>
 
                                                 <div className="flex flex-col">
-                                                    <span className={`text-sm font-semibold ${
-                                                        isActive ? "text-white" : "text-slate-300"
+                                                    <span className={`text-[13px] font-semibold ${
+                                                        isActive ? "text-white" : "text-slate-300/85"
                                                     }`}>
                                                         Solicitudes
                                                     </span>
 
-                                                    <span className="text-xs text-slate-500">
+                                                    <span className="text-[11px] text-slate-500/70">
                                                         Usuarios pendientes
                                                     </span>
                                                 </div>
 
                                                 {isActive && (
-                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-400" />
+                                                    <div className="ml-auto w-[3px] h-8 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-400" />
                                                 )}
                                             </>
                                         )}
@@ -71,16 +72,16 @@ export const AdminGeneralLayout = () => {
 
                             {/* Finanzas */}
                             <div>
-                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-[0.25em] px-3 mb-3">
+                                <p className="text-[10px] font-semibold text-slate-500/60 uppercase tracking-[0.22em] px-3 mb-3 flex items-center gap-2 after:content-[''] after:flex-1 after:h-px after:bg-gradient-to-r after:from-slate-500/20 after:to-transparent">
                                     Finanzas
                                 </p>
 
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
 
                                     <NavLink
                                         to="/dashboard/accounts"
                                         className={({ isActive }) =>
-                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                            `group relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 ${
                                                 isActive
                                                     ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/10 border border-emerald-400/20 shadow-lg shadow-emerald-500/10"
                                                     : "hover:bg-white/5 border border-transparent"
@@ -89,7 +90,7 @@ export const AdminGeneralLayout = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all duration-300 ${
                                                     isActive
                                                         ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
                                                         : "bg-white/5 text-slate-300 group-hover:bg-white/10"
@@ -98,29 +99,28 @@ export const AdminGeneralLayout = () => {
                                                 </div>
 
                                                 <div className="flex flex-col">
-                                                    <span className={`text-sm font-semibold ${
-                                                        isActive ? "text-white" : "text-slate-300"
+                                                    <span className={`text-[13px] font-semibold ${
+                                                        isActive ? "text-white" : "text-slate-300/85"
                                                     }`}>
                                                         Cuentas
                                                     </span>
 
-                                                    <span className="text-xs text-slate-500">
+                                                    <span className="text-[11px] text-slate-500/70">
                                                         Gestión bancaria
                                                     </span>
                                                 </div>
 
                                                 {isActive && (
-                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-emerald-400 to-teal-400" />
+                                                    <div className="ml-auto w-[3px] h-8 rounded-full bg-gradient-to-b from-emerald-400 to-teal-400" />
                                                 )}
                                             </>
                                         )}
                                     </NavLink>
 
-                                    {/* NUEVO: Transacciones */}
                                     <NavLink
                                         to="/dashboard/transactions"
                                         className={({ isActive }) =>
-                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                            `group relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 ${
                                                 isActive
                                                     ? "bg-gradient-to-r from-cyan-500/20 to-indigo-500/10 border border-cyan-400/20 shadow-lg shadow-cyan-500/10"
                                                     : "hover:bg-white/5 border border-transparent"
@@ -129,23 +129,28 @@ export const AdminGeneralLayout = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all duration-300 ${
                                                     isActive
                                                         ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/30"
                                                         : "bg-white/5 text-slate-300 group-hover:bg-white/10"
                                                 }`}>
                                                     📊
                                                 </div>
+
                                                 <div className="flex flex-col">
-                                                    <span className={`text-sm font-semibold ${isActive ? "text-white" : "text-slate-300"}`}>
+                                                    <span className={`text-[13px] font-semibold ${
+                                                        isActive ? "text-white" : "text-slate-300/85"
+                                                    }`}>
                                                         Transacciones
                                                     </span>
-                                                    <span className="text-xs text-slate-500">
+
+                                                    <span className="text-[11px] text-slate-500/70">
                                                         Actividad de cuentas
                                                     </span>
                                                 </div>
+
                                                 {isActive && (
-                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-cyan-400 to-indigo-400" />
+                                                    <div className="ml-auto w-[3px] h-8 rounded-full bg-gradient-to-b from-cyan-400 to-indigo-400" />
                                                 )}
                                             </>
                                         )}
@@ -154,7 +159,7 @@ export const AdminGeneralLayout = () => {
                                     <NavLink
                                         to="/dashboard/deposits"
                                         className={({ isActive }) =>
-                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                            `group relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 ${
                                                 isActive
                                                     ? "bg-gradient-to-r from-orange-500/20 to-amber-500/10 border border-orange-400/20 shadow-lg shadow-orange-500/10"
                                                     : "hover:bg-white/5 border border-transparent"
@@ -163,7 +168,7 @@ export const AdminGeneralLayout = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all duration-300 ${
                                                     isActive
                                                         ? "bg-orange-500 text-white shadow-lg shadow-orange-500/30"
                                                         : "bg-white/5 text-slate-300 group-hover:bg-white/10"
@@ -172,19 +177,19 @@ export const AdminGeneralLayout = () => {
                                                 </div>
 
                                                 <div className="flex flex-col">
-                                                    <span className={`text-sm font-semibold ${
-                                                        isActive ? "text-white" : "text-slate-300"
+                                                    <span className={`text-[13px] font-semibold ${
+                                                        isActive ? "text-white" : "text-slate-300/85"
                                                     }`}>
                                                         Depósitos
                                                     </span>
 
-                                                    <span className="text-xs text-slate-500">
+                                                    <span className="text-[11px] text-slate-500/70">
                                                         Movimientos
                                                     </span>
                                                 </div>
 
                                                 {isActive && (
-                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-orange-400 to-amber-400" />
+                                                    <div className="ml-auto w-[3px] h-8 rounded-full bg-gradient-to-b from-orange-400 to-amber-400" />
                                                 )}
                                             </>
                                         )}
@@ -193,7 +198,7 @@ export const AdminGeneralLayout = () => {
                                     <NavLink
                                         to="/dashboard/products"
                                         className={({ isActive }) =>
-                                            `group relative flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                                            `group relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 ${
                                                 isActive
                                                     ? "bg-gradient-to-r from-indigo-500/20 to-cyan-500/10 border border-indigo-400/20 shadow-lg shadow-indigo-500/10"
                                                     : "hover:bg-white/5 border border-transparent"
@@ -202,7 +207,7 @@ export const AdminGeneralLayout = () => {
                                     >
                                         {({ isActive }) => (
                                             <>
-                                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all duration-300 ${
                                                     isActive
                                                         ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30"
                                                         : "bg-white/5 text-slate-300 group-hover:bg-white/10"
@@ -211,19 +216,19 @@ export const AdminGeneralLayout = () => {
                                                 </div>
 
                                                 <div className="flex flex-col">
-                                                    <span className={`text-sm font-semibold ${
-                                                        isActive ? "text-white" : "text-slate-300"
+                                                    <span className={`text-[13px] font-semibold ${
+                                                        isActive ? "text-white" : "text-slate-300/85"
                                                     }`}>
                                                         Productos
                                                     </span>
 
-                                                    <span className="text-xs text-slate-500">
+                                                    <span className="text-[11px] text-slate-500/70">
                                                         Servicios y productos
                                                     </span>
                                                 </div>
 
                                                 {isActive && (
-                                                    <div className="ml-auto w-2 h-10 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-400" />
+                                                    <div className="ml-auto w-[3px] h-8 rounded-full bg-gradient-to-b from-indigo-400 to-cyan-400" />
                                                 )}
                                             </>
                                         )}
@@ -236,21 +241,32 @@ export const AdminGeneralLayout = () => {
 
                         {/* Footer */}
                         <div className="mt-auto pt-6">
-                            <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-5">
-                                <p className="text-white font-semibold text-sm mb-1">
-                                    Sistema bancario
-                                </p>
+                            <div className="rounded-3xl border border-white/8 bg-white/[0.04] backdrop-blur-sm p-5">
 
-                                <p className="text-slate-400 text-xs leading-relaxed">
+                                {/* Header con avatar */}
+                                <div className="flex items-center gap-2.5 mb-2">
+                                    <div className="w-7 h-7 rounded-[10px] bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
+                                        SB
+                                    </div>
+                                    <p className="text-white font-semibold text-sm">
+                                        Sistema bancario
+                                    </p>
+                                </div>
+
+                                <p className="text-slate-400/80 text-xs leading-relaxed">
                                     Panel administrativo moderno para la gestión de usuarios y finanzas.
                                 </p>
 
                                 <div className="mt-4 flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                    <span className="text-xs text-emerald-300">
+                                    <div className="w-[7px] h-[7px] rounded-full bg-emerald-400 animate-pulse" />
+                                    <span className="text-xs text-emerald-300/90">
                                         Sistema activo
                                     </span>
+                                    <span className="ml-auto text-[10px] text-slate-600 bg-white/5 border border-white/[0.06] px-2 py-0.5 rounded-full">
+                                        v2.1
+                                    </span>
                                 </div>
+
                             </div>
                         </div>
 
@@ -258,7 +274,7 @@ export const AdminGeneralLayout = () => {
                 </aside>
 
                 {/* Contenido */}
-                <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#f8fafc] to-[#eef4ff] p-8">
+                <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#f8fafc] to-[#eef4ff] p-8 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300/60 [&::-webkit-scrollbar-thumb]:rounded-full">
                     <Outlet />
                 </main>
 
