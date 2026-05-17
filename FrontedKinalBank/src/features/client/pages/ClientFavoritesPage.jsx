@@ -12,9 +12,7 @@ const Badge = ({ children, color = "indigo" }) => {
     slate: "bg-slate-100 text-slate-600",
   };
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${colors[color]}`}
-    >
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${colors[color]}`}>
       {children}
     </span>
   );
@@ -23,19 +21,13 @@ const Badge = ({ children, color = "indigo" }) => {
 const ActivityItem = ({ alias, amount, date, positive }) => (
   <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
     <div className="flex items-center gap-3">
-      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-base">
-        ⭐
-      </div>
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-base">⭐</div>
       <div>
         <p className="text-sm font-semibold text-[#16213E]">{alias}</p>
         <p className="text-xs text-slate-400">{date}</p>
       </div>
     </div>
-    <span
-      className={`text-sm font-bold ${
-        positive ? "text-emerald-500" : "text-red-500"
-      }`}
-    >
+    <span className={`text-sm font-bold ${positive ? "text-emerald-500" : "text-red-500"}`}>
       {positive ? "+" : "-"}Q{amount}
     </span>
   </div>
@@ -53,54 +45,26 @@ const TipCard = ({ icon, title, desc }) => (
 
 const FavoriteCard = ({ favorite, onEdit, onDelete, onTransfer, deleting }) => (
   <div className="group relative rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-
-    {/* Accent top bar */}
     <div className="absolute inset-x-0 top-0 h-1 rounded-t-3xl bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-4">
-        {/* Icon with initials */}
         <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#16213E] to-indigo-600 text-white shadow-sm">
-          <span className="text-lg font-extrabold">
-            {favorite.alias?.charAt(0).toUpperCase()}
-          </span>
-          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400 text-[10px] text-white ring-2 ring-white">
-            ✓
-          </span>
+          <span className="text-lg font-extrabold">{favorite.alias?.charAt(0).toUpperCase()}</span>
+          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400 text-[10px] text-white ring-2 ring-white">✓</span>
         </div>
-
         <div>
           <h3 className="text-base font-bold text-[#16213E]">{favorite.alias}</h3>
-          <p className="mt-0.5 font-mono text-xs tracking-wider text-slate-400">
-            {favorite.accountNumber}
-          </p>
-          <div className="mt-1.5">
-            <Badge color="emerald">Verificado</Badge>
-          </div>
+          <p className="mt-0.5 font-mono text-xs tracking-wider text-slate-400">{favorite.accountNumber}</p>
+          <div className="mt-1.5"><Badge color="emerald">Verificado</Badge></div>
         </div>
       </div>
-
-      {/* Actions */}
       <div className="flex gap-2 opacity-0 transition-all group-hover:opacity-100">
-        <button
-          onClick={() => onEdit(favorite)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-500 transition hover:bg-amber-100"
-          title="Editar"
-        >
-          ✏️
-        </button>
-        <button
-          onClick={() => onDelete(favorite._id)}
-          disabled={deleting === favorite._id}
-          className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-500 transition hover:bg-red-100 disabled:opacity-50"
-          title="Eliminar"
-        >
+        <button onClick={() => onEdit(favorite)} className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-500 transition hover:bg-amber-100" title="Editar">✏️</button>
+        <button onClick={() => onDelete(favorite._id)} disabled={deleting === favorite._id} className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-500 transition hover:bg-red-100 disabled:opacity-50" title="Eliminar">
           {deleting === favorite._id ? "..." : "✕"}
         </button>
       </div>
     </div>
-
-    {/* Mini stats row */}
     <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-3">
       <div className="text-center">
         <p className="text-xs text-slate-400">Banco</p>
@@ -111,13 +75,8 @@ const FavoriteCard = ({ favorite, onEdit, onDelete, onTransfer, deleting }) => (
         <p className="mt-0.5 text-xs font-bold text-indigo-600">Monetaria</p>
       </div>
     </div>
-
     <div className="my-4 border-t border-slate-100" />
-
-    <button
-      onClick={() => onTransfer(favorite)}
-      className="w-full rounded-2xl bg-gradient-to-r from-[#16213E] to-indigo-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-indigo-200 hover:shadow-lg"
-    >
+    <button onClick={() => onTransfer(favorite)} className="w-full rounded-2xl bg-gradient-to-r from-[#16213E] to-indigo-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-indigo-200 hover:shadow-lg">
       Transferir
     </button>
   </div>
@@ -125,15 +84,7 @@ const FavoriteCard = ({ favorite, onEdit, onDelete, onTransfer, deleting }) => (
 
 export const ClientFavoritesPage = () => {
   const navigate = useNavigate();
-  const {
-    favorites,
-    loading,
-    error,
-    successMessage,
-    fetchFavorites,
-    deleteFavorite,
-    clearMessages,
-  } = useFavoritesStore();
+  const { favorites, loading, error, successMessage, fetchFavorites, deleteFavorite, clearMessages } = useFavoritesStore();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
@@ -158,9 +109,7 @@ export const ClientFavoritesPage = () => {
   };
 
   const filtered = favorites.filter(
-    (f) =>
-      f.alias.toLowerCase().includes(search.toLowerCase()) ||
-      f.accountNumber.includes(search)
+    (f) => f.alias.toLowerCase().includes(search.toLowerCase()) || f.accountNumber.includes(search)
   );
 
   const recentActivity = favorites.slice(0, 3).map((f, i) => ({
@@ -171,226 +120,184 @@ export const ClientFavoritesPage = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb] px-6 py-8">
-      <div className="mx-auto max-w-7xl space-y-7">
+    <>
+      <div className="relative max-w-7xl mx-auto pb-20 space-y-8 px-4">
 
-        {/* ── HERO ── */}
-        <div className="relative overflow-hidden rounded-3xl border border-[#1f2a44] bg-gradient-to-r from-[#0f1c3f] via-[#1a2d5a] to-[#1e3a7a] p-8 shadow-xl">
-          {/* Número grande de fondo */}
-          <div className="absolute right-48 top-1/2 -translate-y-1/2 text-[110px] font-black text-white/5 select-none pointer-events-none leading-none tracking-tight">
+        {/* ── Hero — rounded, compacto ── */}
+        <div
+          className="relative overflow-hidden rounded-3xl border shadow-2xl p-8"
+          style={{
+            background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%)",
+            borderColor: "rgba(255,255,255,0.05)",
+          }}>
+
+          <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)" }} />
+          <div className="absolute -bottom-16 left-32 w-48 h-48 rounded-full pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)" }} />
+          <div className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full"
+            style={{ background: "linear-gradient(180deg,#ffffff,#7dd3fc,#0ea5e9)" }} />
+          <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[72px] font-black leading-none select-none pointer-events-none tracking-tighter"
+            style={{ color: "rgba(255,255,255,0.03)" }}>
             {favorites.length} FAV
-          </div>
+          </span>
 
-          {/* Dot pattern overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-              backgroundSize: "20px 20px",
-            }}
-          />
-
-          <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative flex items-center justify-between gap-6 flex-wrap">
             <div>
-              <div className="mb-3 h-0.5 w-10 bg-indigo-400" />
-              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-indigo-300">
-                KinalBank
-              </p>
-              <h1 className="text-3xl font-black text-white leading-tight">
-                Mis Favoritos
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-6 h-0.5 rounded-full"
+                  style={{ background: "linear-gradient(90deg,#ffffff,#7dd3fc,#0ea5e9)" }} />
+                <p className="text-[9px] font-black tracking-[0.3em] uppercase" style={{ color: "#818cf8" }}>KinalBank</p>
+              </div>
+              <h1 className="text-5xl font-black leading-none tracking-tighter mb-3">
+                <span style={{ color: "#ffffff" }}>Mis</span><br />
+                <span style={{ color: "#38bdf8" }}>Favoritos</span>
               </h1>
-              <p className="mt-2 text-sm text-slate-300">
+              <p className="text-slate-400 text-sm">
                 {favorites.length} favorito{favorites.length !== 1 ? "s" : ""} · {favorites.length} activo{favorites.length !== 1 ? "s" : ""}
               </p>
             </div>
 
-            {/* Tarjeta flotante derecha */}
-            <div className="flex-shrink-0 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 p-5 text-white min-w-[180px]">
-              <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 mb-1">
-                Tus Favoritos
-              </p>
-              <p className="text-3xl font-black">{favorites.length}</p>
-              <p className="text-xs text-slate-300 mt-1">Cuentas favoritas</p>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="mt-4 w-full rounded-xl bg-indigo-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-indigo-400"
-              >
-                + Agregar favorito
-              </button>
+            <div className="flex items-center gap-4 flex-wrap flex-shrink-0">
+              {/* Contador */}
+              <div className="rounded-2xl px-7 py-5 relative overflow-hidden"
+                style={{
+                  background: "linear-gradient(135deg, rgba(56,189,248,0.2) 0%, rgba(14,165,233,0.1) 100%)",
+                  border: "1px solid rgba(56,189,248,0.4)",
+                  boxShadow: "0 0 32px rgba(56,189,248,0.15), inset 0 1px 0 rgba(255,255,255,0.1)",
+                }}>
+                <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
+                  style={{ background: "radial-gradient(circle, rgba(56,189,248,0.3), transparent)" }} />
+                <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-2 relative" style={{ color: "#7dd3fc" }}>✦ Tus favoritos</p>
+                <p className="text-5xl font-black tabular-nums relative leading-none" style={{ color: "#ffffff" }}>{favorites.length}</p>
+                <div className="mt-3 flex items-center gap-1.5 relative">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" style={{ boxShadow: "0 0 6px #38bdf8" }} />
+                  <p className="text-[11px] font-bold" style={{ color: "#7dd3fc" }}>Cuentas favoritas</p>
+                </div>
+              </div>
+
+              {/* Agregar */}
+              <div className="rounded-2xl px-6 py-4 flex-shrink-0"
+                style={{ background: "rgba(129,140,248,0.12)", border: "1px solid rgba(129,140,248,0.3)" }}>
+                <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-2" style={{ color: "#a5b4fc" }}>● Acción rápida</p>
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="rounded-xl px-4 py-2 text-xs font-black text-white transition"
+                  style={{ background: "linear-gradient(135deg, #6366f1, #4f46e5)", boxShadow: "0 4px 12px rgba(99,102,241,0.4)" }}>
+                  + Agregar favorito
+                </button>
+              </div>
+
+              {/* Seguridad */}
+              <div className="rounded-2xl px-6 py-4 flex-shrink-0"
+                style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)" }}>
+                <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-1" style={{ color: "#6ee7b7" }}>● Seguridad</p>
+                <p className="text-base font-black" style={{ color: "#34d399" }}>Protegido</p>
+                <p className="text-[10px] mt-0.5" style={{ color: "rgba(110,231,183,0.5)" }}>Cifrado extremo a extremo</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ── STATS ── */}
-        <div className="grid gap-5 md:grid-cols-4">
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="absolute inset-x-0 top-0 h-1 bg-indigo-500 rounded-t-2xl" />
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total favoritos</p>
-            <h2 className="mt-3 text-4xl font-black text-[#16213E]">{favorites.length}</h2>
-            <p className="mt-1 text-xs text-slate-400">{favorites.length} activo{favorites.length !== 1 ? "s" : ""}</p>
-          </div>
-
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="absolute inset-x-0 top-0 h-1 bg-emerald-500 rounded-t-2xl" />
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Transferencias rápidas</p>
-            <h2 className="mt-3 text-3xl font-black text-emerald-600">Activas</h2>
-            <p className="mt-1 text-xs text-slate-400">En operación</p>
-          </div>
-
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="absolute inset-x-0 top-0 h-1 bg-red-400 rounded-t-2xl" />
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Seguridad</p>
-            <h2 className="mt-3 text-3xl font-black text-red-500">Protegido</h2>
-            <p className="mt-1 text-xs text-slate-400">Cifrado de extremo a extremo</p>
-          </div>
-
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="absolute inset-x-0 top-0 h-1 bg-amber-400 rounded-t-2xl" />
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Límite diario</p>
-            <h2 className="mt-3 text-3xl font-black text-[#16213E]">Q10,000</h2>
-            <p className="mt-1 text-xs text-slate-400">Disponible hoy</p>
-          </div>
+        {/* ── Stats ── */}
+        <div className="grid grid-cols-4 gap-5">
+          {[
+            { label: "Total favoritos", value: favorites.length, sub: `${favorites.length} activo${favorites.length !== 1 ? "s" : ""}`, accent: "#6366f1" },
+            { label: "Transferencias rápidas", value: "Activas", sub: "En operación", accent: "#10b981", valueColor: "#10b981" },
+            { label: "Seguridad", value: "Protegido", sub: "Cifrado de extremo a extremo", accent: "#f87171", valueColor: "#ef4444" },
+            { label: "Límite diario", value: "Q10,000", sub: "Disponible hoy", accent: "#f59e0b" },
+          ].map((s, i) => (
+            <div key={i} className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm"
+              style={{ border: "1px solid #e2e8f0" }}>
+              <div className="absolute inset-x-0 top-0 h-1 rounded-t-2xl" style={{ background: s.accent }} />
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{s.label}</p>
+              <h2 className="mt-3 text-3xl font-black" style={{ color: s.valueColor ?? "#16213E" }}>{s.value}</h2>
+              <p className="mt-1 text-xs text-slate-400">{s.sub}</p>
+            </div>
+          ))}
         </div>
 
-        {/* ── ALERTS ── */}
-        {error && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600 shadow-sm">
-            {error}
-          </div>
-        )}
-        {successMessage && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-600 shadow-sm">
-            {successMessage}
-          </div>
-        )}
+        {/* Alertas */}
+        {error && <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600 shadow-sm">{error}</div>}
+        {successMessage && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-600 shadow-sm">{successMessage}</div>}
 
-        {/* ── MAIN CONTENT (2-col) ── */}
-        <div className="grid gap-7 lg:grid-cols-3">
+        {/* ── Two-column body ── */}
+        <div className="grid gap-8" style={{ gridTemplateColumns: "1fr 340px" }}>
 
-          {/* LEFT: favorites list */}
-          <div className="lg:col-span-2 space-y-5">
-
-            {/* Search */}
+          {/* LEFT */}
+          <div className="space-y-5">
             {favorites.length > 0 && (
               <div className="relative">
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+                <input value={search} onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar por alias o número de cuenta..."
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 pl-12 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
-                />
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 pl-11 text-sm text-slate-700 shadow-sm outline-none transition-all focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100" />
               </div>
             )}
 
-            {/* Cards */}
             {loading && favorites.length === 0 ? (
               <div className="rounded-3xl border border-slate-200 bg-white p-20 text-center shadow-sm">
                 <p className="text-slate-400">Cargando favoritos...</p>
               </div>
             ) : filtered.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-20 text-center shadow-sm">
-                <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-indigo-50 text-5xl">
-                  ⭐
-                </div>
-                <h3 className="mt-6 text-2xl font-bold text-[#16213E]">
-                  No tienes favoritos todavía
-                </h3>
-                <p className="mt-2 text-slate-400">
-                  Guarda cuentas frecuentes para transferir rápidamente.
-                </p>
-                <button
-                  onClick={() => setShowAddModal(true)}
-                  className="mt-8 rounded-2xl bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700"
-                >
+                <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-indigo-50 text-5xl">⭐</div>
+                <h3 className="mt-6 text-2xl font-bold text-[#16213E]">No tienes favoritos todavía</h3>
+                <p className="mt-2 text-slate-400">Guarda cuentas frecuentes para transferir rápidamente.</p>
+                <button onClick={() => setShowAddModal(true)}
+                  className="mt-8 rounded-2xl bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700">
                   Agregar favorito
                 </button>
               </div>
             ) : (
               <div className="grid gap-5 sm:grid-cols-2">
                 {filtered.map((fav) => (
-                  <FavoriteCard
-                    key={fav._id}
-                    favorite={fav}
-                    onEdit={setEditTarget}
-                    onDelete={handleDelete}
-                    onTransfer={handleTransfer}
-                    deleting={deleting}
-                  />
+                  <FavoriteCard key={fav._id} favorite={fav} onEdit={setEditTarget} onDelete={handleDelete} onTransfer={handleTransfer} deleting={deleting} />
                 ))}
               </div>
             )}
 
-            {/* Footer count */}
             {favorites.length > 0 && (
               <div className="flex justify-end">
                 <div className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-500 shadow-sm">
-                  {filtered.length} favorito{filtered.length !== 1 ? "s" : ""} encontrado
-                  {filtered.length !== 1 ? "s" : ""}
+                  {filtered.length} favorito{filtered.length !== 1 ? "s" : ""} encontrado{filtered.length !== 1 ? "s" : ""}
                 </div>
               </div>
             )}
           </div>
 
-          {/* RIGHT sidebar */}
+          {/* RIGHT */}
           <div className="space-y-5">
-
-            {/* Recent activity */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-[#16213E]">
-                  Actividad reciente
-                </h3>
+                <h3 className="text-sm font-bold text-[#16213E]">Actividad reciente</h3>
                 <Badge color="indigo">Últimos 7 días</Badge>
               </div>
               {recentActivity.length === 0 ? (
-                <p className="text-xs text-slate-400 text-center py-6">
-                  Sin actividad reciente.
-                </p>
+                <p className="text-xs text-slate-400 text-center py-6">Sin actividad reciente.</p>
               ) : (
-                recentActivity.map((a, i) => (
-                  <ActivityItem key={i} {...a} />
-                ))
+                recentActivity.map((a, i) => <ActivityItem key={i} {...a} />)
               )}
               <button className="mt-4 w-full rounded-xl bg-slate-50 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 transition">
                 Ver todos los movimientos →
               </button>
             </div>
 
-            {/* Quick tips */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="mb-4 text-sm font-bold text-[#16213E]">
-                💡 Consejos rápidos
-              </h3>
+              <h3 className="mb-4 text-sm font-bold text-[#16213E]">💡 Consejos rápidos</h3>
               <div className="space-y-3">
-                <TipCard
-                  icon="🔒"
-                  title="Verifica el número"
-                  desc="Siempre confirma el número de cuenta antes de transferir."
-                />
-                <TipCard
-                  icon="⭐"
-                  title="Usa alias descriptivos"
-                  desc="Nombra cada favorito para identificarlos fácilmente."
-                />
-                <TipCard
-                  icon="📲"
-                  title="Notificaciones activas"
-                  desc="Activa alertas para confirmar cada transferencia."
-                />
+                <TipCard icon="🔒" title="Verifica el número" desc="Siempre confirma el número de cuenta antes de transferir." />
+                <TipCard icon="⭐" title="Usa alias descriptivos" desc="Nombra cada favorito para identificarlos fácilmente." />
+                <TipCard icon="📲" title="Notificaciones activas" desc="Activa alertas para confirmar cada transferencia." />
               </div>
             </div>
 
-            {/* Security badge */}
             <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">🛡️</span>
-                <h3 className="text-sm font-bold text-emerald-800">
-                  Cuenta protegida
-                </h3>
+                <h3 className="text-sm font-bold text-emerald-800">Cuenta protegida</h3>
               </div>
-              <p className="text-xs text-emerald-700">
-                Tus transferencias están protegidas con cifrado bancario.
-              </p>
+              <p className="text-xs text-emerald-700">Tus transferencias están protegidas con cifrado bancario.</p>
               <div className="mt-3 flex items-center gap-2">
                 <div className="h-2 flex-1 rounded-full bg-emerald-200">
                   <div className="h-2 w-full rounded-full bg-emerald-500" />
@@ -400,20 +307,10 @@ export const ClientFavoritesPage = () => {
             </div>
           </div>
         </div>
-
-        {/* ── MODALS ── */}
-        {showAddModal && (
-          <AddFavoriteModal
-            onClose={() => { setShowAddModal(false); clearMessages(); }}
-          />
-        )}
-        {editTarget && (
-          <EditFavoriteModal
-            favorite={editTarget}
-            onClose={() => { setEditTarget(null); clearMessages(); }}
-          />
-        )}
       </div>
-    </div>
+
+      {showAddModal && <AddFavoriteModal onClose={() => { setShowAddModal(false); clearMessages(); }} />}
+      {editTarget && <EditFavoriteModal favorite={editTarget} onClose={() => { setEditTarget(null); clearMessages(); }} />}
+    </>
   );
 };

@@ -390,7 +390,6 @@ export const AccountsPage = () => {
 
                         <div className="flex items-center gap-3 flex-wrap">
                             <div className="relative">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none select-none">🔍</div>
                                 <input
                                     type="text"
                                     placeholder="Buscar número de cuenta..."
