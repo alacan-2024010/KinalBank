@@ -81,95 +81,113 @@ export const ClientTransferPage = () => {
             {/* ── Full-width wrapper ── */}
             <div className="w-full min-h-screen" style={{ background: "#f0f4f8" }}>
 
-                {/* ── Hero banner — full width ── */}
-                <div
-                    className="relative overflow-hidden w-full px-10 py-8"
-                    style={{
-                        background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%)",
-                    }}
-                >
-                    {/* left accent bar */}
-                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full"
-                        style={{ background: "linear-gradient(180deg,#ffffff,#7dd3fc,#0ea5e9)" }} />
+                {/* ── Hero banner — card flotante igual a Mis Movimientos ── */}
+                <div className="w-full px-6 pt-6">
+                    <div
+                        className="relative overflow-hidden w-full px-8 py-7"
+                        style={{
+                            background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%)",
+                            borderRadius: "20px",
+                            boxShadow: "0 8px 32px rgba(15,23,42,0.35)",
+                        }}
+                    >
+                        {/* Decorative orbs */}
+                        <div className="absolute -top-16 right-24 w-60 h-60 rounded-full pointer-events-none"
+                            style={{ background: "radial-gradient(circle, rgba(99,102,241,0.20) 0%, transparent 70%)" }} />
+                        <div className="absolute bottom-0 left-1/3 w-40 h-40 rounded-full pointer-events-none"
+                            style={{ background: "radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%)" }} />
 
-                    <div className="relative flex items-center justify-between gap-8 flex-wrap">
+                        {/* Left accent bar */}
+                        <div className="absolute left-0 top-4 bottom-4 w-1 rounded-r-full"
+                            style={{ background: "linear-gradient(180deg,#ffffff,#7dd3fc,#0ea5e9)" }} />
 
-                        {/* Title */}
-                        <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="w-6 h-0.5 rounded-full"
-                                    style={{ background: "linear-gradient(90deg,#ffffff,#7dd3fc)" }} />
-                                <p className="text-[9px] font-black tracking-[0.35em] uppercase"
-                                    style={{ color: "#818cf8" }}>KinalBank</p>
-                            </div>
-                            <h1 className="text-5xl font-black leading-none tracking-tighter mb-2">
-                                <span style={{ color: "#ffffff" }}>Transferir</span>
-                                <span style={{ color: "#38bdf8" }}> Fondos</span>
-                            </h1>
-                            <p className="text-slate-400 text-sm">Mueve dinero de forma segura e inmediata.</p>
-                        </div>
+                        <div className="relative flex items-center justify-between gap-8 flex-wrap">
 
-                        {/* Stats cards — mismo estilo que Mis Movimientos */}
-                        <div className="flex items-stretch gap-3 flex-wrap">
-
-                            {/* Card 1 — Límite diario */}
-                            <div className="rounded-2xl px-5 py-4 flex flex-col justify-between min-w-[130px]"
-                                style={{
-                                    background: "linear-gradient(135deg, rgba(56,189,248,0.20) 0%, rgba(14,165,233,0.10) 100%)",
-                                    border: "1px solid rgba(56,189,248,0.35)",
-                                    boxShadow: "0 0 24px rgba(56,189,248,0.12)",
-                                }}>
-                                <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-2"
-                                    style={{ color: "#7dd3fc" }}>✦ Límite diario</p>
-                                <p className="text-4xl font-black text-white leading-none">10,000</p>
-                                <p className="text-[10px] mt-2 flex items-center gap-1" style={{ color: "rgba(125,211,252,0.65)" }}>
-                                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-                                    Q 2,000 por operación
-                                </p>
+                            {/* Title */}
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-5 h-0.5 rounded-full"
+                                        style={{ background: "linear-gradient(90deg,#ffffff,#7dd3fc)" }} />
+                                    <p className="text-[9px] font-black tracking-[0.35em] uppercase"
+                                        style={{ color: "#818cf8" }}>KinalBank</p>
+                                </div>
+                                <h1 className="text-4xl font-black leading-none tracking-tighter mb-1.5">
+                                    <span style={{ color: "#ffffff" }}>Transferir</span>
+                                    <span style={{ color: "#38bdf8" }}> Fondos</span>
+                                </h1>
+                                <p className="text-slate-400 text-sm">Mueve dinero de forma segura e inmediata.</p>
                             </div>
 
-                            {/* Card 2 — Entradas */}
-                            <div className="rounded-2xl px-5 py-4 flex flex-col justify-between min-w-[130px]"
-                                style={{
-                                    background: "rgba(16,185,129,0.10)",
-                                    border: "1px solid rgba(16,185,129,0.30)",
-                                }}>
-                                <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-2"
-                                    style={{ color: "#6ee7b7" }}>↓ Entradas</p>
-                                <p className="text-2xl font-black leading-none" style={{ color: "#34d399" }}>
-                                    Q {activeAccounts
-                                        .reduce((s, a) => s + Number(a.balance), 0)
-                                        .toLocaleString("es-GT", { minimumFractionDigits: 2 })}
-                                </p>
-                                <p className="text-[10px] mt-2" style={{ color: "rgba(110,231,183,0.55)" }}>
-                                    Depósitos y créditos
-                                </p>
-                            </div>
+                            {/* Stats cards — idéntico a Mis Movimientos */}
+                            <div className="flex items-stretch gap-3 flex-wrap">
 
-                            {/* Card 3 — Salidas */}
-                            <div className="rounded-2xl px-5 py-4 flex flex-col justify-between min-w-[130px]"
-                                style={{
-                                    background: "rgba(239,68,68,0.09)",
-                                    border: "1px solid rgba(239,68,68,0.28)",
-                                }}>
-                                <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-2"
-                                    style={{ color: "#fca5a5" }}>↑ Salidas</p>
-                                <p className="text-2xl font-black leading-none" style={{ color: "#f87171" }}>
-                                    Q {amountNum > 0
-                                        ? amountNum.toLocaleString("es-GT", { minimumFractionDigits: 2 })
-                                        : "0.00"}
-                                </p>
-                                <p className="text-[10px] mt-2" style={{ color: "rgba(252,165,165,0.5)" }}>
-                                    Compras y transferencias
-                                </p>
-                            </div>
+                                {/* Card 1 — Límite diario (estilo "Registros" azul) */}
+                                <div
+                                    className="rounded-2xl px-5 py-4 flex flex-col justify-between min-w-[130px]"
+                                    style={{
+                                        background: "linear-gradient(135deg, rgba(56,189,248,0.22) 0%, rgba(14,165,233,0.12) 100%)",
+                                        border: "1px solid rgba(56,189,248,0.40)",
+                                        boxShadow: "0 0 20px rgba(56,189,248,0.15)",
+                                    }}
+                                >
+                                    <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-1"
+                                        style={{ color: "#7dd3fc" }}>✦ Límite diario</p>
+                                    <p className="text-4xl font-black text-white leading-none">10,000</p>
+                                    <p className="text-[10px] mt-2 flex items-center gap-1"
+                                        style={{ color: "rgba(125,211,252,0.65)" }}>
+                                        <span className="inline-block w-1.5 h-1.5 rounded-full"
+                                            style={{ background: "#38bdf8" }}></span>
+                                        Q 2,000 por operación
+                                    </p>
+                                </div>
 
+                                {/* Card 2 — Entradas (verde) */}
+                                <div
+                                    className="rounded-2xl px-5 py-4 flex flex-col justify-between min-w-[130px]"
+                                    style={{
+                                        background: "rgba(16,185,129,0.10)",
+                                        border: "1px solid rgba(16,185,129,0.30)",
+                                    }}
+                                >
+                                    <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-1"
+                                        style={{ color: "#6ee7b7" }}>↓ Entradas</p>
+                                    <p className="text-2xl font-black leading-none" style={{ color: "#34d399" }}>
+                                        Q {activeAccounts
+                                            .reduce((s, a) => s + Number(a.balance), 0)
+                                            .toLocaleString("es-GT", { minimumFractionDigits: 2 })}
+                                    </p>
+                                    <p className="text-[10px] mt-2" style={{ color: "rgba(110,231,183,0.55)" }}>
+                                        Depósitos y créditos
+                                    </p>
+                                </div>
+
+                                {/* Card 3 — Salidas (rojo) */}
+                                <div
+                                    className="rounded-2xl px-5 py-4 flex flex-col justify-between min-w-[130px]"
+                                    style={{
+                                        background: "rgba(239,68,68,0.09)",
+                                        border: "1px solid rgba(239,68,68,0.28)",
+                                    }}
+                                >
+                                    <p className="text-[9px] font-black tracking-[0.3em] uppercase mb-1"
+                                        style={{ color: "#fca5a5" }}>↑ Salidas</p>
+                                    <p className="text-2xl font-black leading-none" style={{ color: "#f87171" }}>
+                                        Q {amountNum > 0
+                                            ? amountNum.toLocaleString("es-GT", { minimumFractionDigits: 2 })
+                                            : "0.00"}
+                                    </p>
+                                    <p className="text-[10px] mt-2" style={{ color: "rgba(252,165,165,0.5)" }}>
+                                        Compras y transferencias
+                                    </p>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* ── Two-column body ── */}
-                <div className="w-full px-8 py-8 grid gap-8" style={{ gridTemplateColumns: "1fr 380px" }}>
+                <div className="w-full px-6 py-6 grid gap-8" style={{ gridTemplateColumns: "1fr 380px" }}>
 
                     {/* ══════════════ LEFT — main form ══════════════ */}
                     <div className="space-y-5">
