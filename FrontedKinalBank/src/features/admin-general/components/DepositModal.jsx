@@ -63,146 +63,142 @@ export const DepositModal = () => {
     };
 
     return (
-        <>
-            <button
-                onClick={() => setIsOpen(true)}
-                className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl font-medium transition-all shadow-sm"
-            >
-                + Nuevo Depósito
-            </button>
+  <>
+    {/* Trigger Button */}
+    <button
+      onClick={() => setIsOpen(true)}
+      className="bg-gradient-to-r from-slate-900 to-slate-700 hover:from-slate-800 hover:to-slate-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
+    >
+      + Nuevo Depósito
+    </button>
 
-            {/* Modal */}
-            {
-                isOpen && (
-                    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    {/* Modal */}
+    {isOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
 
-                        <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg p-7">
+        {/* Modal Card */}
+        <div className="relative w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in-95">
 
-                            {/* Header */}
-                            <div className="flex items-center justify-between mb-6">
+          {/* Top Accent Bar */}
+          <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-sky-500 to-indigo-500" />
 
-                                <div>
-                                    <h2 className="text-2xl font-bold text-slate-800">
-                                        Nuevo Depósito
-                                    </h2>
+          <div className="p-7">
 
-                                    <p className="text-slate-500 text-sm mt-1">
-                                        Realiza depósitos a cuentas bancarias
-                                    </p>
-                                </div>
+            {/* Header */}
+            <div className="flex items-start justify-between mb-6">
 
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="text-slate-400 hover:text-red-500 text-xl"
-                                >
-                                    ✕
-                                </button>
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900">
+                  Nuevo Depósito
+                </h2>
+                <p className="text-slate-500 text-sm mt-1">
+                  Agrega fondos a una cuenta bancaria
+                </p>
+              </div>
 
-                            </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              >
+                ✕
+              </button>
 
-                            {/* Form */}
-                            <form
-                                onSubmit={handleSubmit}
-                                className="space-y-5"
-                            >
+            </div>
 
-                                {/* Cuenta */}
-                                <div>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
 
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Cuenta
-                                    </label>
+              {/* Cuenta */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Cuenta
+                </label>
 
-                                    <select
-                                        name="accountId"
-                                        value={formData.accountId}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-slate-400"
-                                    >
-                                        <option value="">
-                                            Selecciona una cuenta
-                                        </option>
+                <select
+                  name="accountId"
+                  value={formData.accountId}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-100 outline-none transition-all"
+                >
+                  <option value="">Selecciona una cuenta</option>
 
-                                        {
-                                            accounts?.map((account) => (
-                                                <option
-                                                    key={account._id}
-                                                    value={account._id}
-                                                >
-                                                    {account.accountNumber}
-                                                </option>
-                                            ))
-                                        }
+                  {accounts?.map((account) => (
+                    <option key={account._id} value={account._id}>
+                      {account.accountNumber}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                                    </select>
+              {/* Monto */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Monto
+                </label>
 
-                                </div>
+                <div className="relative">
 
-                                {/* Monto */}
-                                <div>
+                  <input
+                    type="number"
+                    name="amount"
+                    placeholder="0.00"
+                    value={formData.amount}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition-all"
+                  />
+                </div>
+              </div>
 
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Monto
-                                    </label>
+              {/* Moneda */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Moneda
+                </label>
 
-                                    <input
-                                        type="number"
-                                        name="amount"
-                                        placeholder="Ingrese el monto"
-                                        value={formData.amount}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-slate-400"
-                                    />
+                <select
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition-all"
+                >
+                  <option value="GTQ">GTQ</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
 
-                                </div>
+              {/* Buttons */}
+              <div className="flex justify-end gap-3 pt-4">
 
-                                {/* Moneda */}
-                                <div>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="px-5 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-all"
+                >
+                  Cancelar
+                </button>
 
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Moneda
-                                    </label>
+                <button
+                  type="submit"
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-slate-900 to-slate-700 text-white font-semibold hover:shadow-lg active:scale-[0.98] transition-all"
+                >
+                  Realizar Depósito
+                </button>
 
-                                    <select
-                                        name="currency"
-                                        value={formData.currency}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-slate-400"
-                                    >
-                                        <option value="GTQ">GTQ</option>
-                                        <option value="USD">USD</option>
-                                        <option value="EUR">EUR</option>
-                                    </select>
+              </div>
 
-                                </div>
+            </form>
 
-                                {/* Buttons */}
-                                <div className="flex justify-end gap-3 pt-4">
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsOpen(false)}
-                                        className="px-5 py-3 rounded-xl border border-slate-300 hover:bg-slate-100 transition-all"
-                                    >
-                                        Cancelar
-                                    </button>
-
-                                    <button
-                                        type="submit"
-                                        className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl font-medium transition-all"
-                                    >
-                                        Realizar Depósito
-                                    </button>
-
-                                </div>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-                )
-            }
-        </>
-    );
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+);
 };
