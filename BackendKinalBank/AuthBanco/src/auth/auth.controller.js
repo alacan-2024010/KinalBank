@@ -5,11 +5,20 @@ import { User } from '../users/user.model.js';
 import { Role } from './role.model.js';
 import { generateJWT } from '../../helpers/generate.jwt.js';
 import { generateUserId } from '../../helpers/uuid.generator.js';
+import { sendPasswordResetCode } from '../../helpers/email.helper.js';
+
+// Almacén temporal en memoria: { email -> { code, expiresAt } }
+// En producción deberías usar Redis o guardar en la BD.
+const resetCodes = new Map();
+
+const CODE_EXPIRY_MS = 15 * 60 * 1000; // 15 minutos
+
+/** Genera un código numérico de 6 dígitos */
+const generateCode = () =>
+  Math.floor(100000 + Math.random() * 900000).toString();
 
 
-
-
-// REGISTRO (queda pendiente hasta que admin apruebe)
+// ─── REGISTRO ────────────────────────────────────────────────────────────────
 export const register = async (req, res) => {
   try {
     const {
@@ -27,67 +36,45 @@ export const register = async (req, res) => {
     if (!password || password.length < 8) {
       return res.status(400).json({
         success: false,
-        message: 'La contraseña tiene que tener mínimo 8 caracteres'
+        message: 'La contraseña tiene que tener mínimo 8 caracteres',
       });
     }
 
-    // Validar ingresos(solo permite numeros)
     if (isNaN(monthlyIncome) || Number(monthlyIncome) < 100) {
       return res.status(400).json({
         success: false,
         message: 'Ingresos inválidos',
       });
     }
-      
-    if(!name || !username || !email || !password ||!dpi ||!address ||!phone||!job || !monthlyIncome){
-      return res.status(400).json({
-        success:false,
-        message: 'Todos los campos son obligaotrios'
-      })
-    }
 
-    if(!dpi || dpi.length !==13){
-      return res.status(400).json({
-        success:false,
-        message: 'El DPI tiene que tener 13 números'
-      })
-    }
-
-    // Verificar duplicados
-    const exists = await User.findOne({
-      where: { Email: email },
-    });
-
-    if (exists) {
+    if (!name || !username || !email || !password || !dpi || !address || !phone || !job || !monthlyIncome) {
       return res.status(400).json({
         success: false,
-        message: 'Correo ya registrado',
+        message: 'Todos los campos son obligatorios',
       });
     }
 
-    const existsUsername = await User.findOne({
-      where : {Username: username}
-    })
-
-    if(existsUsername){
+    if (!dpi || dpi.length !== 13) {
       return res.status(400).json({
         success: false,
-        message: 'Username ya registrado'
-      })
+        message: 'El DPI tiene que tener 13 números',
+      });
     }
 
-    // Buscar rol CLIENT
-    const clientRole = await Role.findOne({
-      where: { Name: 'CLIENT' },
-    });
+    const exists = await User.findOne({ where: { Email: email } });
+    if (exists) {
+      return res.status(400).json({ success: false, message: 'Correo ya registrado' });
+    }
 
-    // Encriptar password
+    const existsUsername = await User.findOne({ where: { Username: username } });
+    if (existsUsername) {
+      return res.status(400).json({ success: false, message: 'Username ya registrado' });
+    }
+
+    const clientRole = await Role.findOne({ where: { Name: 'CLIENT' } });
     const hash = await argon2.hash(password);
-
-    // Generar número de cuenta
     const accountNumber = `ACC-${Date.now()}`;
 
-    // Crear usuario
     const user = await User.create({
       Id: generateUserId(),
       Name: name,
@@ -101,7 +88,7 @@ export const register = async (req, res) => {
       MonthlyIncome: monthlyIncome,
       AccountNumber: accountNumber,
       RoleId: clientRole.Id,
-      Status: false, // pendiente
+      Status: false,
     });
 
     return res.status(201).json({
@@ -111,57 +98,34 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: 'Error en registro',
-    });
+    return res.status(500).json({ success: false, message: 'Error en registro' });
   }
 };
 
 
-
-
-// LOGIN
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Buscar usuario con rol
     const user = await User.findOne({
       where: { Email: email },
-      include: {
-        model: Role,
-        as: 'role',
-      },
+      include: { model: Role, as: 'role' },
     });
 
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: 'Credenciales inválidas',
-      });
+      return res.status(400).json({ success: false, message: 'Credenciales inválidas' });
     }
 
-    // Verificar aprobado
     if (!user.Status) {
-      return res.status(403).json({
-        success: false,
-        message: 'Cuenta pendiente de aprobación',
-      });
+      return res.status(403).json({ success: false, message: 'Cuenta pendiente de aprobación' });
     }
 
-    // Verificar password
     const valid = await argon2.verify(user.Password, password);
-
     if (!valid) {
-      return res.status(400).json({
-        success: false,
-        message: 'Credenciales inválidas',
-      });
+      return res.status(400).json({ success: false, message: 'Credenciales inválidas' });
     }
 
-    // Generar token
     const token = await generateJWT(user.Id, {
       role: user.role.Name,
       email: user.Email,
@@ -170,67 +134,132 @@ export const login = async (req, res) => {
     return res.json({
       success: true,
       token,
-      user: {
-        id: user.Id,
-        name: user.Name,
-        role: user.role.Name,
-      },
+      user: { id: user.Id, name: user.Name, role: user.role.Name },
     });
   } catch (error) {
     console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: 'Error en login',
-    });
+    return res.status(500).json({ success: false, message: 'Error en login' });
   }
 };
 
-export const forgotPassword = async (req, res) => {
-  try {
-    const { username, dpi, newPassword } = req.body;
 
-    if (!username || !dpi || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Todos los campos son obligatorios"
-      });
+// ─── PASO 1: Solicitar código de recuperación ─────────────────────────────────
+// POST /auth/forgot-password/request
+export const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'El correo es obligatorio' });
+    }
+
+    // Buscar usuario por correo (no revelar si existe o no por seguridad)
+    const user = await User.findOne({ where: { Email: email } });
+
+    if (user) {
+      const code = generateCode();
+      console.log(`🔑 CÓDIGO GENERADO PARA ${email}: ${code}`);
+      const expiresAt = Date.now() + CODE_EXPIRY_MS;
+
+      // Guardar código (sobreescribe si ya había uno previo)
+      resetCodes.set(email.toLowerCase(), { code, expiresAt });
+
+      // Enviar correo (si falla el envío, igual respondemos éxito para no revelar el email)
+      try {
+        await sendPasswordResetCode(email, code);
+      } catch (mailErr) {
+        console.error('Error enviando correo de recuperación:', mailErr);
+      }
+    }
+
+    // Siempre respondemos lo mismo para no revelar si el correo existe
+    return res.json({
+      success: true,
+      message: 'Si el correo está registrado, recibirás un código de verificación.',
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Error al procesar la solicitud' });
+  }
+};
+
+
+// ─── PASO 2: Verificar código ────────────────────────────────────────────────
+// POST /auth/forgot-password/verify
+export const verifyResetCode = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({ success: false, message: 'Correo y código son obligatorios' });
+    }
+
+    const entry = resetCodes.get(email.toLowerCase());
+
+    if (!entry) {
+      return res.status(400).json({ success: false, message: 'Código inválido o expirado' });
+    }
+
+    if (Date.now() > entry.expiresAt) {
+      resetCodes.delete(email.toLowerCase());
+      return res.status(400).json({ success: false, message: 'El código ha expirado. Solicita uno nuevo.' });
+    }
+
+    if (entry.code !== code.trim()) {
+      return res.status(400).json({ success: false, message: 'Código incorrecto' });
+    }
+
+    // Marcar como verificado (permitir cambio de contraseña)
+    entry.verified = true;
+
+    return res.json({ success: true, message: 'Código verificado correctamente' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Error al verificar el código' });
+  }
+};
+
+
+// ─── PASO 3: Cambiar contraseña ───────────────────────────────────────────────
+// PUT /auth/forgot-password/reset
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Todos los campos son obligatorios' });
     }
 
     if (newPassword.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "La contraseña debe tener mínimo 8 caracteres"
-      });
+      return res.status(400).json({ success: false, message: 'La contraseña debe tener mínimo 8 caracteres' });
     }
 
-    const user = await User.findOne({
-      where: { Username: username, DPI: dpi }
-    });
+    const entry = resetCodes.get(email.toLowerCase());
 
+    if (!entry || !entry.verified) {
+      return res.status(400).json({ success: false, message: 'Debes verificar tu código primero' });
+    }
+
+    if (Date.now() > entry.expiresAt) {
+      resetCodes.delete(email.toLowerCase());
+      return res.status(400).json({ success: false, message: 'La sesión de recuperación expiró. Solicita un nuevo código.' });
+    }
+
+    const user = await User.findOne({ where: { Email: email } });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "Usuario o DPI incorrecto"
-      });
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
     }
 
     const hash = await argon2.hash(newPassword);
-
     user.Password = hash;
     await user.save();
 
-    return res.json({
-      success: true,
-      message: "Contraseña actualizada correctamente"
-    });
+    // Limpiar el código usado
+    resetCodes.delete(email.toLowerCase());
 
+    return res.json({ success: true, message: 'Contraseña actualizada correctamente' });
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Error al recuperar contraseña"
-    });
+    return res.status(500).json({ success: false, message: 'Error al actualizar la contraseña' });
   }
 };
