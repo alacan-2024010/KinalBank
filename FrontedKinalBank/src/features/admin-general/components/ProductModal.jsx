@@ -62,7 +62,11 @@ export const ProductModal = ({ product, onClose }) => {
 
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Precio</span>
-              <p className="text-lg font-extrabold text-indigo-600">Q {Number(product.price).toLocaleString("es-GT",{minimumFractionDigits:2})}</p>
+              <p className="text-lg font-extrabold text-indigo-600">
+                {Number(product.price).toLocaleString("es-GT", {
+                  minimumFractionDigits: 2,
+                })}
+              </p>
             </div>
           </div>
         </div>

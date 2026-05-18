@@ -486,7 +486,6 @@ export const CreateProductModal = ({ product, onClose }) => {
                     className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-sm transition-colors duration-300"
                     style={{ color: focusedField === 'price' ? '#059669' : '#94a3b8' }}
                   >
-                    $
                   </span>
                   <input
                     name="price"

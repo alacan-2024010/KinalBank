@@ -256,11 +256,8 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                                 <Field label="Propietario" icon={<UserIcon className="w-4 h-4" />}>
                                     <div className="relative">
                                         <div className="relative flex items-center">
-                                            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                                                <SearchIcon className="w-4 h-4" />
-                                            </div>
                                             <input
-                                                className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 text-sm outline-none transition-all bg-white hover:border-slate-300 font-medium"
+                                                className="w-full px-4 pr-10 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 text-sm outline-none transition-all bg-white hover:border-slate-300 font-medium"
                                                 value={search}
                                                 onChange={(e) => {
                                                     setSearch(e.target.value);
@@ -401,14 +398,11 @@ export const AccountModal = ({ initial, onClose, onSave, loading }) => {
                             {!isEdit && (
                                 <Field label="Saldo inicial" icon={<CreditCardIcon className="w-4 h-4" />}>
                                     <div className="relative">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
-                                            {form.currency === "GTQ" ? "Q" : form.currency === "USD" ? "$" : "€"}
-                                        </div>
                                         <input
                                             type="number"
                                             min="0"
                                             step="0.01"
-                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 text-sm outline-none transition-all bg-white hover:border-slate-300 font-bold tabular-nums"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 text-sm outline-none transition-all bg-white hover:border-slate-300 font-bold tabular-nums"
                                             value={form.balance}
                                             onChange={(e) => set("balance", Number(e.target.value))}
                                             placeholder="0.00"
